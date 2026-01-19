@@ -6,301 +6,407 @@
 
 <p align="center">
   <a href="https://www.codreum.com">Website</a> •
-  <a href="https://www.codreum.com/products.html#zone">Upgrade</a> •
-  <a href="#quickstart">Quickstart</a>
+  <a href="#quickstart">Quickstart</a> •
+  <a href="#support">Support</a>
 </p>
 
-# Codreum DNS Monitoring (NXDOMAIN)
+# Codreum DNS Monitoring (Pro) — DNSCI-Z (Hosted Zone)
 
-Detect DNS misconfigurations fast by alerting on **NXDOMAIN spikes** using **AWS CloudWatch + Terraform**.
+Production-grade DNS observability for **Route 53 hosted zone query logs**: **NXDOMAIN + SERVFAIL + REFUSED + success rate + client error rate + EDNS + TCP share**, with **multi-zone** dashboards, Contributor Insights packs, and opinionated investigation views — deployed into **your AWS account** with **Terraform + CloudWatch**.
 
-✅ Dashboards + alarms + anomaly detection  
-✅ Works with **Route 53 hosted zone query logs** + **Resolver query logs (VPC)**  
-✅ Top-N triage views (domain / qtype / edge / source)
+✅ Multi-zone support (one deployment can cover many hosted zones)  
+✅ Rich dashboards: Ops landing + Investigation + Deep forensics + per-zone dashboards + Top-N drilldowns  
+✅ More DNS health signals (beyond NXDOMAIN) + optional anomaly detection  
+✅ Built-in alert delivery presets (Email / SMS / Slack via SNS + Chatbot)  
+✅ Optional log-group management add-ons (Data Protection, Log Indexing, Log Anomaly Detector, Subscription filters)
 
-This solution is for **NXDOMAIN signals only**. **Codreum Pro** adds broader DNS error metrics and investigation dashboards.
-
-- **Deploy:** jump to [Quickstart](#quickstart)  
-- **Website:** https://www.codreum.com  
-- **Upgrade:** https://www.codreum.com/products.html#zone  
+> This README is for the **Pro / paid** edition. If you only need NXDOMAIN signals, use the free NXDOMAIN module instead (same concept, fewer metrics and dashboards).
 
 ---
 
-## Why NXDOMAIN matters
+## Why use Codreum DNS Monitor?
 
-NXDOMAIN means “this name does not exist.” A spike is rarely random — it’s usually a signal that **something changed**.
+DNS issues rarely look like “DNS is down.” They show up as:
+- rising app latency (timeouts while resolvers retry)
+- sporadic 5xx (only some clients / regions / edges impacted)
+- failed deployments (wrong names, missing records)
+- subtle misroutes (wrong answers, stale caching)
 
-Common causes:
-- broken deployments (wrong domain, missing records, bad service discovery)
-- misconfigured clients / endpoints (typos, outdated configs, DNS suffix issues)
-- malware / beaconing attempts (random subdomains, DGA patterns)
-- expired records or incorrect resolver paths
-
-Why it’s valuable:
-- **Fastest indicator of DNS regressions** (before app errors explode)
-- Helps pinpoint **what** is failing and **who** is generating it (Top-N)
-- Works for both **public hosted zones** and **private/VPC resolver** DNS
+Codreum DNS Monitor is designed for **fast triage**:
+- alert on the **right DNS signals** (not just “is port 53 open?”)
+- instantly surface **what changed** (Top-N by qname/qtype/edge/client)
+- keep everything **inside your AWS account** (no DNS log shipping)
 
 ---
 
-## Why AWS CloudWatch (in-account) instead of external DNS monitoring?
+## Why AWS CloudWatch (in-account)?
 
-External checkers are useful, but they often miss the failures you actually care about:
-- External monitors can only test **public DNS** and a small set of resolvers.
-- They can’t see **your internal resolver traffic** (VPC Resolver logs).
-- They typically miss **client-specific failures** and “partial outages” (only some subnets, only some clients, only some edges).
+External DNS checkers are useful, but they’re limited:
+- they test from a few locations and only for **public DNS**
+- they can’t see your real production resolver traffic patterns
+- they miss “partial outages” (only some edges / clients / qtypes)
 
-This module uses **your real DNS query logs** inside AWS:
-- captures failures from **real production clients**
-- supports **private/internal DNS** (VPC resolver queries)
-- triages by **top offending domain / qtype / edge / source IP**
-- avoids shipping DNS logs to third parties
+This solution uses your **real Route 53 hosted zone query logs** already in CloudWatch Logs:
+- sees failures from **actual clients**
+- attributes impact to **top domains / qtypes / edges / source IPs**
+- runs fully **in-account** using CloudWatch Logs, Metrics, Alarms, Dashboards and Contributor Insights
 
-> Privacy note: this module does **not** send DNS logs to Codreum. Everything stays inside your AWS account.
-
----
-
-## What you get (Free)
-
-✅ Included:
-1. NXDOMAIN **count** alarm (Zone + VPC)
-2. NXDOMAIN **rate (%)** alarm (Zone + VPC)
-3. NXDOMAIN **Anomaly detection** alarms (count + rate)
-4. CloudWatch dashboards:
-   - Zone dashboard
-   - VPC dashboard
-   - Ops landing dashboard
-5. Top-N triage views  
-   - Zone: Top NXDOMAIN by domain/qtype/edge/source  
-   - VPC: Top NXDOMAIN by qname/source
-6. SNS integration: alarms publish to your provided SNS topic (`dns_alert_sns_arn`)
-
-🚫 Not included (Free):
-1. Additional DNS error metrics (SERVFAIL/REFUSED/etc.)
-2. Expanded Contributor Insights packs and dashboards beyond NXDOMAIN
-3. Licensing, enforcement, premium support / SLA (Pro)
-4. Log group management (Pro)
-
-| Capability | NXDOMAIN | Pro |
-|---|:---:|:---:|
-| NXDOMAIN static alarms + anomaly detection | ✅ | ✅ |
-| NXDOMAIN Contributor Insights (Top-N rules) | ✅ | ✅ |
-| NXDOMAIN dashboards (Zone/VPC baseline) | ✅ | ✅ |
-| Additional DNS metrics + Contributor Insights packs (SERVFAIL/REFUSED/etc.) | ❌ | ✅ |
-| Per zone metrics/Alarm/CI toggle | ❌ | ✅ |
-| Per-zone metric dashboards (beyond NXDOMAIN) | ❌ | ✅ |
-| Per-zone Top-N dashboards (expanded) | ❌ | ✅ |
-| Built-in SNS wiring presets (Email / Slack / SMS) | ❌ | ✅ |
-| Log group management | ❌ | ✅ |
-| Multiple zone/VPC IDs in one deployment | ❌ | ✅ |
-| Advanced dashboards (Ops landing / Investigation / Forensics) | ❌ | ✅ |
-| Licensing & enforcement | ❌ | ✅ |
-| Support / SLA | ❌ | ✅ |
+> Privacy note: DNS logs stay in your account. Codreum does not receive your DNS logs.
 
 ---
 
-## How it works (simple architecture)
+## Why DNS monitoring is important
 
-This module:
-1. reads from an existing CloudWatch Logs group containing DNS logs (`NX_log_group_name`)
-2. creates:
-   - Log metric filters → custom metrics in `Codreum/DNSCI`
-   - CloudWatch alarms (static + rate % + anomaly)
-   - Contributor Insights rules + Logs Insights widgets (Top-N triage)
-   - Dashboards (zone, vpc, ops landing)
-3. sends alarm notifications to your SNS topic (`dns_alert_sns_arn`)
+DNS is a shared dependency across:
+- service discovery (internal + external)
+- authentication and identity flows
+- email delivery, webhooks, API gateways
+- failover and multi-region routing
 
----
-
-## Prerequisites
-
-1. Terraform >= 1.14
-2. AWS provider >= 6.2
-3. A CloudWatch Logs group already receiving DNS logs:
-   - **Zone mode:** Route 53 hosted zone query logs (CLF-like fields include `hosted_zone_id`, `rcode`, `qname`, etc.)
-   - **VPC mode:** JSON resolver query logs (fields include `vpc_id`, `rcode`, `srcaddr`, `query_name` / `qname`, etc.)
-4. Region constraints (AWS limitation)
-   - **Zone mode (`NX_zone_id`)**: Route 53 *public hosted zone* query logging requires the CloudWatch Logs log group in **`us-east-1` (US East / N. Virginia)**. Deploy this module in **`us-east-1`** for Zone mode. 
-   - **VPC mode (`NX_vpc_id`)**: Resolver query logging is **regional**. Create the query logging configuration and destination (CloudWatch log group) in the **same region as the VPC**. If you have VPCs in multiple regions, deploy one module per region.
-   - If you need both Zone + VPC monitoring across different regions, deploy **two module instances**: one in **`us-east-1`** for Zone mode, plus one per VPC region for Resolver mode.
-
+When DNS degrades, downstream symptoms are confusing and slow to diagnose. DNS monitoring gives you:
+- early warning (error rate shifts before app errors spike)
+- attribution (which names / qtypes / edges / clients are failing)
+- confidence in changes (spot regressions after deploys, migrations, or record changes)
 
 ---
 
-## Configuration
+## Why Pro vs NXDOMAIN-only?
 
-Required:
-- `prefix`
-- `aws_region`
-- `NX_log_group_name`
-- `dns_alert_sns_arn`
-- Provide at least one:
-  - `NX_zone_id` (enables zone alarms/dashboards/widgets)
-  - `NX_vpc_id` (enables vpc alarms/dashboards/widgets)
+The free NXDOMAIN module is intentionally narrow: **NXDOMAIN** signals only.
 
-You can enable zone monitoring, VPC monitoring, or both.
+Pro adds:
+- **More DNS metrics** (SERVFAIL, REFUSED, overall client error %, success %, TCP %, EDNS health, low-volume detection)
+- **More Contributor Insights packs** (profiles + matrices for qtype / client / edge / proto / rcode / EDNS)
+- **More dashboards** (Investigation + Deep Forensics + richer per-zone dashboards and Top-N views)
+- **Per-zone control** (choose which metrics/alarms/CI/dashboards each zone gets)
+- **Built-in notification wiring** (optional Email/SMS/Slack subscriptions created for you)
+- **Licensing & enforcement** (fail-fast license validation + optional periodic checks)
+
+---
+
+## What you get (Pro)
+
+### 1) Metrics (CloudWatch namespace: `Codreum/DNSCI`)
+Per hosted zone (ZoneId dimension), Pro can publish and visualize:
+
+**Core volume & errors**
+- `ZoneTotal` — total query volume
+- `ZoneNXDOMAIN` — NXDOMAIN count + rate (%)
+- `ZoneServerError` — SERVFAIL count + rate (%)
+- `ZoneRefused` — REFUSED count + rate (%)
+- `ZoneClientError` — any `rcode != NOERROR` count + rate (%)
+- **Overall error %** — client error rate (%) derived from `ZoneClientError / ZoneTotal`
+- **Rare errors** — `(client errors) - (NXDOMAIN + SERVFAIL + REFUSED)` (helps surface FORMERR/NOTIMP/… without extra filters)
+
+**Success**
+- `ZoneSuccess` — `rcode == NOERROR` count + success rate (%)
+
+**Protocol & EDNS health**
+- `ZoneProtoTCP` — TCP share (%) (UDP/TCP mix shift is often a DNS incident signal)
+- `ZoneEdnsNone` — share of queries with EDNS=none (%)
+- `ZoneEdnsBad` — share of queries with EDNS=bad (%)
+
+> You choose what’s enabled per zone via `act_metric`.
+
+### 2) Alarms (static thresholds + optional anomaly detection)
+For each enabled signal, the module can create:
+- **count alarms** (e.g., NXDOMAIN count spikes)
+- **rate alarms** (e.g., NXDOMAIN %, SERVFAIL %, overall error %)
+- **optional anomaly alarms** (enabled via specific `*_anom` activation flags)
+- **low-volume alarm** (`total_low`) to catch silent outages or log pipeline issues
+
+Alarms publish to an SNS topic (default) or to per-zone SNS topics you provide.
+
+### 3) Contributor Insights packs (Top-N + profile views)
+Pro adds many optional CI rules to accelerate investigation:
+- QTYPE, RCODE, PROTO, EDNS “profiles”
+- Error-only profiles (what changes when failures rise)
+- Client/edge matrices (who is failing from where)
+- High-value qtype focus (A/AAAA/CNAME/MX/TXT)
+- Suspicious name Top-N (hunt DGA/random subdomain spikes)
+
+> Enable these per zone via `act_metric` flags like `qtype_profile`, `rcode_profile`, `client_edge_matrix`, etc.
+
+### 4) Dashboards (opinionated investigation flow)
+Depending on `act_dashboard`, Pro can create:
+
+**Global dashboards**
+- **DNS Ops Landing**: your “start here” page with links, key tiles, and SLO overlays
+- **DNS Ops Investigate**: faster drilldowns for incident response
+- **DNS Ops Deep Forensics**: heavier views for post-incident / slow-burn debugging  
+- **SLO tiles** (optional): overlays based on `dns_slo_config` thresholds (success %, max error %, max TCP %, max EDNS none/bad %)
+
+**Per-zone dashboards**
+- **Zone dashboard**: metrics, rates, breakdowns for a single zone
+- **Zone Top-N dashboard**: rapid triage tables (domains/qtypes/edges/clients/etc.)
+
+Dashboard names are prefixed, for example:
+- `${prefix}-dnsciz-dns-ops-landing`
+- `${prefix}-dnsciz-dns-ops-investigate`
+- `${prefix}-dnsciz-dns-ops-deep-forensics`
+- `${prefix}-dnsciz-zone-<zone-name>`
+- `${prefix}-dnsciz-zone-<zone-name>-topn`
+
+### 5) Optional log group management add-ons
+Disabled by default; enable per log group when you want them:
+- **CloudWatch Logs Data Protection** (audit + optional de-identification for sensitive fields)
+- **Log field indexing** for faster Logs Insights / CI workflows
+- **CloudWatch Logs Anomaly Detector**
+- **Subscription filter management** (advanced; lets you forward only the relevant zone traffic to a destination)
 
 ---
 
 ## Quickstart
 
-1) Ensure DNS query logs are flowing into CloudWatch Logs:
-- Hosted zone query logs (CLF-like)
-- Resolver query logs (JSON)
+### 0) Before you start: enable hosted zone query logging
+For each Route 53 hosted zone you want to monitor:
+1. Enable **Query logging**
+2. Send logs to a CloudWatch Logs log group in **`us-east-1`** (AWS requirement for public hosted zone query logging)
 
-2) Copy/paste into `main.tf`:
+> If you already have query logs flowing, you can proceed.
+
+### 1) Add the module to Terraform
+
+Paste into `main.tf` (edit values to match your environment):
 
 ```hcl
-module "codreum_dns_NX" {
-  source = "github.com/Codreum/terraform-aws-dns-monitoring-nxdomain//modules?ref=v0.1.0"
+module "codreum_dnsci_pro_zone" {
+  # Replace with your actual module source / ref
+  source = "github.com/Codreum/terraform-aws-dns-monitoring-pro//modules/zone?ref=vX.Y.Z"
 
-  prefix              = "acme-dev"
-  aws_region          = "us-east-1"
-  NX_log_group_name = "/aws/route53/resolver-query-logs"  # must match your CloudWatch log group name
-  dns_alert_sns_arn   = "arn:aws:sns:us-east-1:123456789012:alerts" # change to your SNS ARN
+  prefix     = "acme-prod"
+  aws_region = "us-east-1" # required for hosted-zone query logs
 
-  # Enable one or both:
-  NX_vpc_id  = "vpc-0123456789abcdef0" # optional
-  NX_zone_id = "Z123EXAMPLE"           # optional
+  # --- Pro license (required) ---
+  license = {
+    type       = "dnsciz"
+    license_id = "LIC-XXXX-XXXX"
+
+    # One deployment can cover many hosted zones
+    zone_ids = ["Z123EXAMPLE", "Z456EXAMPLE"]
+  }
+
+  # Map each ZoneId to the CloudWatch Logs group that contains its query logs.
+  # Value can be a log group name OR a log group ARN.
+  subject_log_group_map = {
+    "Z123EXAMPLE" = "arn:aws:logs:us-east-1:123456789012:log-group:/aws/route53/zone-Z123:*"
+    "Z456EXAMPLE" = "/aws/route53/zone-Z456"
+  }
+
+  # --- Per-zone feature toggles ---
+  # Must include "total" whenever you enable other metrics (enforced by the module).
+  act_metric = {
+    "Z123EXAMPLE" = [
+      "total",
+      "nxdomain",
+      "server_error",
+      "refused",
+      "success",
+      "client_error",
+      "overall_error",
+      "rare_error",
+      "proto_tcp",
+      "edns_failure",
+
+      # Optional: anomaly alarms (enable explicitly)
+      "nxdomain_anom",
+      "nxdomain_rate_anom",
+      "overall_error_rate_anom",
+
+      # Optional: CI packs (enable explicitly)
+      "qtype_profile",
+      "rcode_profile",
+      "client_volume",
+      "edge_imbalance",
+      "proto_profile",
+      "edns_behavior",
+      "client_edge_matrix",
+      "qtype_edge_matrix"
+    ]
+
+    # A second zone could run a lighter footprint
+    "Z456EXAMPLE" = ["total", "nxdomain", "nxdomain_rate_anom"]
+  }
+
+  # Dashboards to create (choose any of these tokens, plus any ZoneId in your license)
+  act_dashboard = ["opslanding", "slo", "investigation", "forensic", "Z123EXAMPLE", "Z456EXAMPLE"]
+
+  # Optional: alert delivery presets (SNS topic + subscriptions)
+  dns_alert_emails = ["dns-oncall@example.com"]
+
+  # Optional: Slack via AWS Chatbot
+  enable_slack_notifications = false
+  slack_workspace_id         = "T0123456789"
+  slack_channel_id           = "C0123456789"
 }
 ```
-You can also copy the main.tf file from example folder, and make the minimal edit
-- replace  module source with "github.com/Codreum/terraform-aws-dns-monitoring-nxdomain//modules?ref=v0.1.0"
-- Change NX_log_group_name , dns_alert_sns_arn, NX_vpc_id or/and NX_zone_id to your own resource
-- Change the aws_region to the VPC Region, if you are using VPC Mode
-- If using Zone mode, make sure aws_region = "us-east-1" (required by Route 53 query logging)
 
-3. (optional) this module exports dashboard URLs, alarm ARNs, and metric names via Terraform outputs. If you want the output, paste this code too into your own main.tf
-```hcl
-output "dns_NX_enabled" {
-  value = module.codreum_dns_NX.enabled
-}
+### 2) Deploy
 
-output "dns_NX_dashboards" {
-  value = module.codreum_dns_NX.dashboards
-}
-
-output "dns_NX_alarms" {
-  value = module.codreum_dns_NX.alarms
-}
-
-output "dns_NX_metrics" {
-  value = module.codreum_dns_NX.metrics
-}
-
-output "dns_NX_ci_rules" {
-  value = module.codreum_dns_NX.contributor_insights_rules
-}
-```
-
-You can also copy the output.tf file from example folder
-
-4. Deploy :
-
+```bash
 terraform init
-
 terraform apply
+```
 
+---
+
+## How it works
+
+1. **License check (fail fast)**  
+   On `terraform apply`, the module calls Codreum’s license endpoint and validates:
+   - account id
+   - product type
+   - allowed ZoneIds  
+   If validation fails, apply fails.
+
+2. **Metrics from logs**  
+   CloudWatch Logs **metric filters** match fields from Route 53 hosted zone query logs (CLF) and publish metrics into `Codreum/DNSCI` with `ZoneId` as a dimension.
+
+3. **Alarms**  
+   Alarms are created per zone for the enabled signals:
+   - count alarms, rate alarms, and optional anomaly alarms
+   - notifications routed via SNS (global default or per-zone override)
+
+4. **Contributor Insights rules**  
+   CI rules read the same log groups and compute Top-N / profiles used by the dashboards.
+
+5. **Dashboards**  
+   Dashboards are created only when requested via `act_dashboard`, and are designed to guide incident response:
+   - start at Ops landing
+   - drill into per-zone dashboards and Top-N
+   - use Investigation / Forensics when needed
+
+6. **(Optional) Log group management**  
+   If enabled, the module applies CloudWatch Logs features (data protection, indexing, anomaly detectors, subscription filters) to the underlying log groups.
+
+---
+
+## Prerequisites
+
+- Terraform >= 1.14
+- AWS provider >= 6.2
+- Hosted zone query logs already flowing into CloudWatch Logs
+- **Region constraint:** for hosted zone query logging, the destination log group must be in **`us-east-1`** and this module should be deployed in **`us-east-1`**
+- Outbound HTTPS access from your Terraform runner (and from the license watcher Lambda if enabled) to reach Codreum’s license endpoint
+
+---
+
+## Configuration
+
+### Required inputs
+- `prefix`
+- `aws_region`
+- `license` (Pro license object)
+- `subject_log_group_map` (ZoneId → log group name/arn)
+- `act_metric` (ZoneId → enabled flags) — include `"total"` whenever you enable anything else
+
+### Common optional inputs
+- **Dashboards:** `act_dashboard` (global tokens + ZoneIds)
+- **Threshold tuning:** `metric_override` (per-zone thresholds/periods/action toggles)
+- **SLO overlays:** `dns_slo_config` (success %, max error %, max TCP %, max EDNS none/bad)
+- **Alert routing:** `subject_sns_topic_map` (ZoneId → SNS topic ARN)
+- **Notification presets:** `dns_alert_emails`, `dns_alert_sms`, `dns_alert_https_endpoints`, `sns_kms_key_id`
+- **Slack notifications:** `enable_slack_notifications`, `slack_workspace_id`, `slack_channel_id`
+- **Log group management (off by default):**
+  - `log_data_protection_override`
+  - `log_index_override`
+  - `log_anomaly_override`
+  - `log_anomaly_detector_enabled`
+  - `log_subscription_overrides`
+
+### Example: per-zone alert routing
+Send one zone to a dedicated SNS topic:
+
+```hcl
+subject_sns_topic_map = {
+  "Z123EXAMPLE" = "arn:aws:sns:us-east-1:123456789012:dns-prod-critical"
+}
+```
+
+### Example: tweak thresholds
+```hcl
+metric_override = {
+  "Z123EXAMPLE" = {
+    nxdomain_count = {
+      threshold          = 500
+      evaluation_periods = 2
+      period             = 300
+    }
+    overall_error_rate = {
+      threshold_pct      = 2.0
+      evaluation_periods = 3
+      period             = 300
+    }
+  }
+}
+```
+
+---
 
 ## What you’ll see after deploy
 
 After `terraform apply`, you’ll have CloudWatch **dashboards**, **alarms**, and **Contributor Insights** rules created in your AWS account.
 
-> Tip: Open **CloudWatch → Dashboards** and search for your `prefix` (e.g., `acme-dev-*`).
+Tip: in **CloudWatch → Dashboards**, search for your `prefix` (e.g., `acme-prod-*`).
 
-### 1) Dashboards (Ops / Zone / VPC)
+### Dashboards
+- Global dashboards (when enabled via `act_dashboard`):
+  - `${prefix}-dnsciz-dns-ops-landing`
+  - `${prefix}-dnsciz-dns-ops-investigate`
+  - `${prefix}-dnsciz-dns-ops-deep-forensics`
+- Per-zone dashboards (when you include the ZoneId in `act_dashboard`):
+  - `${prefix}-dnsciz-zone-<zone-name>`
+  - `${prefix}-dnsciz-zone-<zone-name>-topn`
 
-You’ll get an Ops landing page plus dashboards for the modes you enabled:
+### Metrics & alarms
+- Metrics appear under **CloudWatch → Metrics → `Codreum/DNSCI`**
+- Alarms appear under **CloudWatch → Alarms**, named with your prefix and zone name
+- (Optional) a license status metric/alarm is created under `Codreum/License` to indicate license validity
 
-- **Ops landing**: quick links + “what to check first”
-- **Zone dashboard** (if `NX_zone_id` is set): NXDOMAIN count, rate %, anomaly band, Top-N breakdowns
-- **VPC dashboard** (if `NX_vpc_id` is set): NXDOMAIN count, rate %, anomaly band, Top-N by source/qname
-
-![Dashboards](./screenshot/dashboard3.jpg)
-
-![Dashboards](./screenshot/dashboard1.jpg)
-
-![Dashboards](./screenshot/dashboard2.jpg)
-
-**How to use**
-- If alarms fire, start at **Ops landing**, then jump into **Zone/VPC** dashboard.
-- Use **Top-N** tables to identify the top failing domains, qtype, edge, and source IPs.
-
----
-
-### 2) Alarms (Count / Rate / Anomaly)
-
-This module creates alarms for:
-- **NXDOMAIN count** (static threshold)
-- **NXDOMAIN rate (%)** (error rate)
-- **Anomaly detection** on both count and rate
-
-Alarms publish to your SNS topic (`dns_alert_sns_arn`).
-
-![Alarms](./screenshot/alarm.jpg)
-
-![Alarms](./screenshot/alarm2.jpg)
-
-![Alarms](./screenshot/email_alert.jpg)
-
-**What to check**
-- **Count alarm**: sudden volume spike (often broken deploy / client loop)
-- **Rate alarm**: NXDOMAIN becoming a larger share of total queries
-- **Anomaly alarms**: unexpected behavior even if below static thresholds
+### Contributor Insights
+- CI rules appear under **CloudWatch → Contributor Insights**
+- Count and cost scale with the number of enabled CI packs and the number of zones
 
 ---
-
-### 3) Contributor Insights (Top-N triage)
-
-Contributor Insights rules are used for “Top-N” analysis (fast triage):
-- Zone: top NXDOMAIN by **qname / qtype / edge / source**
-- VPC: top NXDOMAIN by **qname / source**
-
-![Contributor Insights](./screenshot/CI1.jpg)
-
-![Contributor Insights](./screenshot/CI2.jpg)
-
-**How to use**
-- Open **CloudWatch → Contributor Insights**
-- Filter by your `prefix`
-- Start with **Top qname** and **Top source** to quickly locate the cause
-
-
-
-## Upgrade to Codreum Pro
-
-Codreum Pro adds:
-1. More DNS metrics (SERVFAIL/REFUSED/overall error, success rate, etc.)
-2. More pre-built metric alarms, contributor insight packs
-3. More dashboards with richer, opinionated investigation widgets
-4. subscription management & support options
-5. Multi-zone / multi-vpc support
-6. Optional prebuilt alerting integrations (email / Slack / SMS) via SNS setup
-
-Learn more: https://www.codreum.com/products.html#zone
 
 ## Costs (AWS billed)
 
-This module creates CloudWatch resources that may incur AWS charges, depending on usage, region, and free tier.
+This module creates CloudWatch resources that may incur AWS charges depending on region and usage.
 
-- **Contributor Insights rules**: used for Top-N analysis (e.g., top NXDOMAIN domains/clients). Charged per rule and usage.
-- **Custom metrics**: metric filters publish metrics under `Codreum/DNSCI` (e.g., `ZoneNXDOMAIN`, `VpcNXDOMAIN`). Custom metrics may be billed by AWS.
-- **CloudWatch alarms**: static threshold, rate (%), and anomaly alarms may be billed by AWS.
+Typical cost drivers:
+- **Custom metrics** published by log metric filters (`Codreum/DNSCI`)
+- **CloudWatch alarms** (static + anomaly)
+- **Contributor Insights rules** (Top-N / profiles / matrices)
+- **CloudWatch Logs features** if enabled (Data Protection, Log Indexing, Log Anomaly Detector)
+- **Logs Insights queries** you run from dashboards (charged per GB scanned)
 
-See AWS pricing: https://aws.amazon.com/cloudwatch/pricing/
+Recommendation: start with a small `act_metric` set for one zone, validate signal value, then scale out.
+
+---
 
 ## Security & data
-- This module does **not** send DNS logs to Codreum.
-- All analysis happens inside your AWS account using CloudWatch Logs / Metrics / Contributor Insights.
-- Alarm notifications are published only to your SNS topic.
 
-## Limitations (Free)
-- Designed for **one zone and/or one VPC** per deployment.
-- Only NXDOMAIN signals are included.
-- Assumes logs already exist in CloudWatch Logs.
+- DNS logs remain in **your AWS account** (CloudWatch Logs).
+- The module’s licensing check makes an HTTPS request to Codreum to validate your subscription (no DNS logs are sent).
+- Optional CloudWatch Logs Data Protection can audit / de-identify sensitive fields inside CloudWatch Logs (when enabled).
+- Notifications are delivered only through **SNS** destinations you configure (email/SMS/Slack/HTTPS endpoints).
 
+---
+
+## Limitations
+
+- This module (DNSCI-Z) is for **hosted zone query logs**. Hosted zone query logging requires **`us-east-1`** for the destination log group.
+- Requires Route 53 hosted zone query logs in **CLF** format (fields like `hosted_zone_id`, `qname`, `qtype`, `rcode`, `proto`, `edge`, `rip`, `edns`).
+- Dashboards expect the underlying metrics to be enabled; disabling signals may produce empty tiles.
+- Log group management features are **opt-in** and may not be available in all partitions/regions.
+
+---
 
 ## Support
-- Free: community support via GitHub Issues  
-- Pro: SLA-backed support options (link)
 
+- Pro customers: reach out via your Codreum support channel (email / ticket portal as provided with your subscription).
+- If this repo is mirrored internally, file an issue with:
+  - your `prefix`
+  - affected ZoneId(s)
+  - which `act_metric` flags are enabled
+  - the CloudWatch alarm name(s) / dashboard name(s)
