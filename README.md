@@ -541,10 +541,10 @@ module "dnsciz" {
   }
 
   # Map each ZoneId to the CloudWatch Logs group that contains its query logs.
-  # Value can be a log group name OR a log group ARN.
+  # Value must be log group ARN.
   subject_log_group_map = {
     "Z123EXAMPLE" = "arn:aws:logs:us-east-1:123456789012:log-group:/aws/route53/zone-Z123:*"
-    "Z456EXAMPLE" = "/aws/route53/zone-Z456"
+    "Z456EXAMPLE" = "arn:aws:logs:us-east-1:123456789012:log-group:/aws/route53/zone-Z456:*"
   }
 
   # Enable per-zone features (include "total" for ratio-based signals and dashboards)
@@ -605,7 +605,7 @@ During `terraform apply`, the module validates your license for the target AWS a
 - `prefix`
 - `aws_region`
 - `license` (Pro license object)
-- `subject_log_group_map` (ZoneId → log group name/arn)
+- `subject_log_group_map` (ZoneId → log group arn)
 - `act_metric` (ZoneId → enabled flags)
 
 ### `act_metric` flags (complete reference)
@@ -1091,7 +1091,7 @@ Each template is **standalone**, **copy/paste-ready**, and mapped to a real oper
 
 Templates are organized under the `templates/` directory:
 
-- `templates/01-all-dashboards/`
+- [`templates/01-all-dashboards/`](templates/01-all-dashboards/)
 - `templates/02-ops-landing-only/`
 - `templates/03-investigations-only/`
 - `templates/04-deep-forensics-only/`
@@ -1105,12 +1105,16 @@ Templates are organized under the `templates/` directory:
 - `templates/12-per-zone-routing-kms-sns/`
 - `templates/13-anomaly-centric-alerting/`
 - `templates/14-dashboard-ux-slo-tuning/`
-- `templates/15-log-forwarding-subset/`
+- `templates/15-forward-subset-logs-subscription-filters/`
+- `templates/16-sms-paging-only/`
+- `templates/17-webhook-https-alerting/`
+- `templates/18-least-privilege-no-zone-lookup/`
+- `templates/19-ci-only-hunting-pack/`
+- `templates/20-log-hygiene-dp-indexing-no-anomaly/`
+
 
 Each template folder contains:
 - `main.tf` — a complete runnable example
-- *(recommended)* `README.md` — “what this does / when to use it / what to edit”
-- *(optional)* `terraform.tfvars.example` — if you prefer keeping IDs and environment values out of `main.tf`
 
 ### How to use a template
 
@@ -1119,7 +1123,7 @@ Each template folder contains:
 3. Replace placeholders in `main.tf`:
    - `lic_xxxxx...` → your Codreum License ID
    - `Z123...` → your Route 53 hosted zone IDs
-   - log group ARNs / names in `subject_log_group_map`
+   - log group ARNs in `subject_log_group_map`
    - Slack IDs if enabling Slack notifications
    - `prefix` and `tags`
 4. Deploy with Terraform:
@@ -1147,21 +1151,25 @@ Top-N tables are **CloudWatch Logs Insights widgets**, so they do **not** requir
 
 ### Quick pick guide
 
-- **Want everything (fleet + zone drilldowns)** → Template 01  
-- **Fleet health only (Ops Landing)** → Template 02  
-- **Cross-zone triage only (Investigations)** → Template 03  
-- **Global breakdowns only (Deep Forensics)** → Template 04  
-- **Per-zone dashboards only** → Template 05  
+- **Want everything** → Template 01  
+- **Fleet health only** → Template 02  
+- **Cross-zone triage only** → Template 03  
+- **Global breakdowns only** → Template 04  
+- **Zone-focused ops** → Template 05 (dashboards) or Template 09 (dashboards + alarms + notifications)  
 - **Best default for production** → Template 06  
-- **Log management + Slack/email** → Template 07  
+- **Need log management + Slack/email** → Template 07  
 - **Alerting only (no dashboards)** → Template 08  
-- **Per-zone dashboards + Top-N + alarms** → Template 09  
-- **Phased rollout (dashboards first, metrics later)** → Template 10  
-- **Top-N only (no custom metrics)** → Template 11  
-- **Different paging per zone + encrypted SNS** → Template 12  
-- **Anomaly-first alerting (seasonal traffic)** → Template 13  
-- **Tune dashboard lookbacks + tile periods + SLO overlays** → Template 14  
-- **Forward a filtered subset of logs downstream** → Template 15
+- **Phased rollout (dashboards first)** → Template 10  
+- **Top‑N only, minimal spend** → Template 11  
+- **Different paging per zone + KMS** → Template 12  
+- **Seasonal traffic → anomaly-first** → Template 13  
+- **Tune dashboard time windows + SLOs** → Template 14  
+- **Stream a filtered subset of logs** → Template 15
+- **SMS paging only (alarms-only)** → Template 16  
+- **Webhook / HTTPS endpoints (SNS HTTPS)** → Template 17  
+- **Least-privilege deploy (no Route 53 GetHostedZone)** → Template 18  
+- **Threat hunting / CI-only pack (+ Top-N + indexing)** → Template 19  
+- **Log hygiene (Data Protection + indexing) with anomaly detectors disabled** → Template 20
 
 
 ## Costs (AWS billed)

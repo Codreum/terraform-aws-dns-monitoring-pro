@@ -1,0 +1,43 @@
+module "dnsciz" {
+  source  = "registry.codreum.com/codreum/dnsciz/aws"
+  version = "1.0.0"
+
+  prefix     = "acme-prod"
+  aws_region = "us-east-1"
+
+  license = {
+    type       = "dnsciz"
+    license_id = "lic_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    zone_ids   = ["Z123EXAMPLE1", "Z123EXAMPLE2"]
+  }
+
+  subject_log_group_map = {
+    "Z123EXAMPLE1" = "arn:aws:logs:us-east-1:123456789012:log-group:/aws/route53/zone-1"
+    "Z123EXAMPLE2" = "arn:aws:logs:us-east-1:123456789012:log-group:/aws/route53/zone-2"
+  }
+
+  # act_dashboard intentionally omitted (no dashboards)
+
+  act_metric = {
+    "Z123EXAMPLE1" = [
+      "total", "total_low",
+      "success", "client_error", "nxdomain", "server_error", "refused",
+      "proto_tcp", "edns_failure",
+      "overall_error", "rare_error"
+    ]
+    "Z123EXAMPLE2" = [
+      "total", "total_low",
+      "success", "client_error", "nxdomain", "server_error", "refused",
+      "proto_tcp", "edns_failure",
+      "overall_error", "rare_error"
+    ]
+  }
+
+  dns_alert_emails = ["oncall@example.com"]
+
+  enable_slack_notifications = true
+  slack_workspace_id         = "TXXXXXXXXXX"
+  slack_channel_id           = "CXXXXXXXXXX"
+
+  tags = { owner = "you", project = "dnsciz" }
+}
