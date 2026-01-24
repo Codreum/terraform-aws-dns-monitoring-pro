@@ -1092,25 +1092,25 @@ Each template is **standalone**, **copy/paste-ready**, and mapped to a real oper
 Templates are organized under the `templates/` directory:
 
 - [`templates/01-all-dashboards/`](templates/01-all-dashboards/)
-- `templates/02-ops-landing-only/`
-- `templates/03-investigations-only/`
-- `templates/04-deep-forensics-only/`
-- `templates/05-per-zone-only/`
-- `templates/06-sensible-default/`
-- `templates/07-log-management-slack-email/`
-- `templates/08-alarms-only-slack-email/`
-- `templates/09-per-zone-topn-alarms/`
-- `templates/10-phased-rollout/`
-- `templates/11-topn-only-no-metrics/`
-- `templates/12-per-zone-routing-kms-sns/`
-- `templates/13-anomaly-centric-alerting/`
-- `templates/14-dashboard-ux-slo-tuning/`
-- `templates/15-forward-subset-logs-subscription-filters/`
-- `templates/16-sms-paging-only/`
-- `templates/17-webhook-https-alerting/`
-- `templates/18-least-privilege-no-zone-lookup/`
-- `templates/19-ci-only-hunting-pack/`
-- `templates/20-log-hygiene-dp-indexing-no-anomaly/`
+- [`templates/02-ops-landing-only/`](templates/02-ops-landing-only/)
+- [`templates/03-investigations-only/`](templates/03-investigations-only/)
+- [`templates/04-deep-forensics-only/`](templates/04-deep-forensics-only/)
+- [`templates/05-per-zone-only/`](templates/05-per-zone-only/)
+- [`templates/06-sensible-default/`](templates/06-sensible-default/)
+- [`templates/07-log-management-slack-email/`](templates/07-log-management-slack-email/)
+- [`templates/08-alarms-only-slack-email/`](templates/08-alarms-only-slack-email/)
+- [`templates/09-per-zone-topn-alarms/`](templates/09-per-zone-topn-alarms/)
+- [`templates/10-phased-rollout/`](templates/10-phased-rollout)
+- [`templates/11-topn-only-no-metrics/`](templates/11-topn-only-no-metrics/)
+- [`templates/12-per-zone-routing-kms-sns/`](templates/12-per-zone-routing-kms-sns/)
+- [`templates/13-anomaly-centric-alerting/`](templates/13-anomaly-centric-alerting/)
+- [`templates/14-dashboard-ux-slo-tuning/`](templates/14-dashboard-ux-slo-tuning/)
+- [`templates/15-forward-subset-logs-subscription-filters/`](templates/15-forward-subset-logs-subscription-filters/)
+- [`templates/16-sms-paging-only/`](templates/16-sms-paging-only/)
+- [`templates/17-webhook-https-alerting/`](templates/17-webhook-https-alerting/)
+- [`templates/18-least-privilege-no-zone-lookup/`](templates/18-least-privilege-no-zone-lookup/)
+- [`templates/19-ci-only-hunting-pack/`](templates/19-ci-only-hunting-pack/)
+- [`templates/20-log-hygiene-dp-indexing-no-anomaly/`](templates/20-log-hygiene-dp-indexing-no-anomaly/)
 
 
 Each template folder contains:
