@@ -62,7 +62,7 @@ This module is designed to answer the questions that matter during incidents:
 | Multiple zone/VPC IDs in one deployment | ❌ | ✅ |
 | Advanced dashboards (Ops landing / Investigation / Forensics) | ❌ | ✅ |
 | Licensing & enforcement | ❌ | ✅ |
-| Support / SLA | ❌ | ✅ | 
+| Support / SLA | ❌ | ✅ |
 
 ---
 
@@ -98,7 +98,6 @@ This solution uses your **real Route 53 hosted zone query logs** already in Clou
 - triages by **top offending domain / qtype / edge / source IP**
 - avoids shipping DNS logs to third parties
 
-
 > Privacy note: DNS logs stay in your account. Codreum does not receive your DNS logs.
 
 ---
@@ -107,16 +106,17 @@ This solution uses your **real Route 53 hosted zone query logs** already in Clou
 
 This repository contains **templates + docs only**. The **Pro module code** is delivered via the **Codreum private Terraform registry**.
 
-1) **See plans & pricing**: https://www.codreum.com/products.html  
-2) **Purchase / manage licenses** (login): https://www.codreum.com/licenses.html  
-3) In your license page, click **Connect Terraform** to get a short-lived code  
+1) **See plans & pricing**: https://www.codreum.com/products.html
+2) **Purchase / manage licenses** (login): https://www.codreum.com/licenses.html
+3) In your license page, click **Connect Terraform** to get a short-lived code
 4) Run:
 
-```
+```bash
 codreum connect --code CT-REPLACE-ME
-terraform init
+terraform ini
 terraform apply
 ```
+
 Need help ? Contact: https://www.codreum.com/contact.html
 
 ---
@@ -133,7 +133,6 @@ Need help ? Contact: https://www.codreum.com/contact.html
 
 ---
 
-
 ## Table of contents
 - [License](#License)
 - [Quickstart](#quickstart)
@@ -147,19 +146,19 @@ Need help ? Contact: https://www.codreum.com/contact.html
 ---
 
 ## License (important)
-This repo (docs + templates) is Apache-2.0.  
+This repo (docs + templates) is Apache-2.0.
 The **Pro module code** is distributed via the **Codreum private Terraform registry** under commercial terms.
 See: [LICENSE_SCOPE.md](LICENSE_SCOPE.md)
 
 ---
 
-## Quickstart
+## Quickstar
 
 This module is delivered through the **Codreum private Terraform registry**. The quickstart flow is:
 
-1) Ensure Route 53 hosted zone query logs are flowing to CloudWatch Logs (in **`us-east-1`**).  
-2) Purchase Pro and obtain your **License ID** and **registry access**.  
-3) Run **Codreum CLI** to authenticate Terraform to `registry.codreum.com`.  
+1) Ensure Route 53 hosted zone query logs are flowing to CloudWatch Logs (in **`us-east-1`**).
+2) Purchase Pro and obtain your **License ID** and **registry access**.
+3) Run **Codreum CLI** to authenticate Terraform to `registry.codreum.com`.
 4) Add the module to `main.tf`, configure inputs, then run `terraform init/plan/apply`.
 
 ---
@@ -174,7 +173,7 @@ This module is delivered through the **Codreum private Terraform registry**. The
 - Your Codreum Pro subscription details:
   - **License ID** (used for license validation at apply time)
   - Access to the **Codreum registry** (`registry.codreum.com`) via Codreum CLI
-- Outbound HTTPS access from your Terraform runner (and from the license watcher Lambda if enabled) to reach Codreum’s license endpoint
+- Outbound HTTPS access from your Terraform runner (and from the license watcher Lambda if enabled) to reach Codreum’s license endpoin
 
 ---
 
@@ -201,7 +200,7 @@ After purchasing Pro from Codreum, you will receive:
 
 ### 3) Authenticate Terraform to the Codreum registry (Codreum CLI)
 
-From the Codreum **License** page, open your license and click **Connect Terraform**.  
+From the Codreum **License** page, open your license and click **Connect Terraform**.
 A dialog will provide a short-lived connection code and the exact command to run, for example:
 
 ```bash
@@ -265,7 +264,7 @@ module "dnsciz" {
 After authenticating to the registry (Step 3), run:
 
 ```bash
-terraform init
+terraform ini
 terraform plan
 terraform apply
 ```
@@ -298,7 +297,7 @@ During `terraform apply`, the module validates your license for the target AWS a
 
 ## Templates
 
-This repository includes a curated set of **Terraform `main.tf` templates** for Codreum **DNSCI-Z (Hosted Zone) Pro**.  
+This repository includes a curated set of **Terraform `main.tf` templates** for Codreum **DNSCI-Z (Hosted Zone) Pro**.
 Each template is **standalone**, **copy/paste-ready**, and mapped to a real operational scenario (fleet dashboards, per-zone operations, phased rollout, anomaly-first alerting, log management, log forwarding, and alerting-only deployments).
 
 ### Where to find templates
@@ -326,7 +325,6 @@ Templates are organized under the `templates/` directory:
 - [`templates/19-ci-only-hunting-pack/`](templates/19-ci-only-hunting-pack/)
 - [`templates/20-log-hygiene-dp-indexing-no-anomaly/`](templates/20-log-hygiene-dp-indexing-no-anomaly/)
 
-
 Each template folder contains:
 - `main.tf` — a complete runnable example
 
@@ -344,7 +342,7 @@ Each template folder contains:
 
 ```bash
 cd templates/<chosen-template>
-terraform init
+terraform ini
 terraform plan
 terraform apply
 ```
@@ -358,33 +356,32 @@ DNSCI-Z separates **dashboard creation** from **widget data availability**:
   - `act_metric` turns Route 53 query logs into `Codreum/DNSCI` CloudWatch custom metrics (via metric filters).
   - If a required metric is not enabled, the dashboard still exists, but impacted widgets may show **No data**, blank charts, or `-` tiles.
 
-**Zone Top-N dashboards are the exception:**  
+**Zone Top-N dashboards are the exception:**
 Top-N tables are **CloudWatch Logs Insights widgets**, so they do **not** require `act_metric`. They **do** require Route 53 query logs to be flowing to the configured log group and parseable with the expected fields.
 
 > Practical rule: `act_dashboard` controls **whether the dashboard exists**; `act_metric` controls **whether most widgets have data**.
 
 ### Quick pick guide
 
-- **Want everything** → Template 01  
-- **Fleet health only** → Template 02  
-- **Cross-zone triage only** → Template 03  
-- **Global breakdowns only** → Template 04  
-- **Zone-focused ops** → Template 05 (dashboards) or Template 09 (dashboards + alarms + notifications)  
-- **Best default for production** → Template 06  
-- **Need log management + Slack/email** → Template 07  
-- **Alerting only (no dashboards)** → Template 08  
-- **Phased rollout (dashboards first)** → Template 10  
-- **Top‑N only, minimal spend** → Template 11  
-- **Different paging per zone + KMS** → Template 12  
-- **Seasonal traffic → anomaly-first** → Template 13  
-- **Tune dashboard time windows + SLOs** → Template 14  
+- **Want everything** → Template 01
+- **Fleet health only** → Template 02
+- **Cross-zone triage only** → Template 03
+- **Global breakdowns only** → Template 04
+- **Zone-focused ops** → Template 05 (dashboards) or Template 09 (dashboards + alarms + notifications)
+- **Best default for production** → Template 06
+- **Need log management + Slack/email** → Template 07
+- **Alerting only (no dashboards)** → Template 08
+- **Phased rollout (dashboards first)** → Template 10
+- **Top‑N only, minimal spend** → Template 11
+- **Different paging per zone + KMS** → Template 12
+- **Seasonal traffic → anomaly-first** → Template 13
+- **Tune dashboard time windows + SLOs** → Template 14
 - **Stream a filtered subset of logs** → Template 15
-- **SMS paging only (alarms-only)** → Template 16  
-- **Webhook / HTTPS endpoints (SNS HTTPS)** → Template 17  
-- **Least-privilege deploy (no Route 53 GetHostedZone)** → Template 18  
-- **Threat hunting / CI-only pack (+ Top-N + indexing)** → Template 19  
+- **SMS paging only (alarms-only)** → Template 16
+- **Webhook / HTTPS endpoints (SNS HTTPS)** → Template 17
+- **Least-privilege deploy (no Route 53 GetHostedZone)** → Template 18
+- **Threat hunting / CI-only pack (+ Top-N + indexing)** → Template 19
 - **Log hygiene (Data Protection + indexing) with anomaly detectors disabled** → Template 20
-
 
 ## Costs (AWS billed)
 
@@ -418,7 +415,7 @@ Recommendation: start with a small `act_metric` set for one zone, validate signa
 
 ---
 
-## Support
+## Suppor
 
 - Pro customers: reach out via your Codreum support channel (email / ticket portal as provided with your subscription).
 - If this repo is mirrored internally, file an issue with:
@@ -443,11 +440,11 @@ These are emitted via CloudWatch Logs metric filters:
 
 - **Core volume & response codes**
   - `ZoneTotal` — total query count (baseline volume)
-  - `ZoneNXDOMAIN` — NXDOMAIN query count
-  - `ZoneServerError` — SERVFAIL / server error query count
-  - `ZoneRefused` — REFUSED query count
-  - `ZoneClientError` — any `rcode != NOERROR` query count
-  - `ZoneSuccess` — `rcode == NOERROR` query count
+  - `ZoneNXDOMAIN` — NXDOMAIN query coun
+  - `ZoneServerError` — SERVFAIL / server error query coun
+  - `ZoneRefused` — REFUSED query coun
+  - `ZoneClientError` — any `rcode != NOERROR` query coun
+  - `ZoneSuccess` — `rcode == NOERROR` query coun
 
 - **Protocol & EDNS (counts)**
   - `ZoneProtoTCP` — TCP query count (used to show TCP share)
@@ -499,7 +496,7 @@ DNS incidents rarely present as “DNS is down.” These signals are chosen to c
 For enabled signals, the module can create:
 
 - **Count alarms** — best for low-volume zones where percentages can be noisy (e.g., NXDOMAIN count spikes, SERVFAIL count bursts).
-- **Rate/percent alarms** — best for high-volume zones where a small percentage change is meaningful (e.g., SERVFAIL %, overall client error %, TCP share %). 
+- **Rate/percent alarms** — best for high-volume zones where a small percentage change is meaningful (e.g., SERVFAIL %, overall client error %, TCP share %).
 - **Optional anomaly alarms** — adaptive baselines for signals with strong seasonality or diurnal patterns (enable explicitly via `*_anom` flags)
 - **Low-volume alarm** (`total_low`) — detects silent failures (true traffic drop) and log ingestion gaps where “no data” should be treated as a problem.
 
@@ -560,7 +557,7 @@ Enable these per zone via `act_metric` flags (for example: `qtype_profile`, `rco
 
 Pro ships with opinionated CloudWatch dashboards designed for fast triage and a consistent incident workflow.
 
-Dashboards are **created** when requested via `act_dashboard` (global tokens plus any ZoneId(s) from your license).  
+Dashboards are **created** when requested via `act_dashboard` (global tokens plus any ZoneId(s) from your license).
 Most widgets are **metric widgets** backed by `Codreum/DNSCI` custom metrics. Those metrics only exist if you enable the corresponding feature flags in `act_metric`.
 
 #### Dashboard creation vs widget data availability
@@ -580,16 +577,16 @@ If a required metric is not enabled:
 
 Dashboards use configurable ISO-8601 lookback windows (the CloudWatch dashboard time range):
 
-- **Ops Landing / Investigations / per-zone dashboards:** default start = `-PT3H`  
+- **Ops Landing / Investigations / per-zone dashboards:** default start = `-PT3H`
   Override with `dns_primary_lookback`.
-- **Deep Forensics:** default start = `-PT6H`  
+- **Deep Forensics:** default start = `-PT6H`
   Override with `dns_deep_forensics_lookback`.
 
 Some single-value “SLI tiles” intentionally **do not stretch** to the dashboard time range (`setPeriodToTimeRange = false`). Instead they show the latest bucket of a fixed period (e.g. “last 5m”):
 
-- **Global SLI tile period:** default `300` seconds (5 minutes)  
+- **Global SLI tile period:** default `300` seconds (5 minutes)
   Override with `dns_sli_tile_period_seconds`.
-- **Top‑N SEARCH bucket period:** default `300` seconds (5 minutes)  
+- **Top‑N SEARCH bucket period:** default `300` seconds (5 minutes)
   Override with `dns_topn_bucket_period_seconds`.
 
 What this means operationally:
@@ -646,7 +643,7 @@ Dashboards are most useful when the underlying count metrics exist. The table be
 | REFUSED by zone | `refused` | reads `ZoneRefused` |
 | Server errors (SERVFAIL) by zone | `server_error` | reads `ZoneServerError` |
 
-**Minimum to keep the core Landing SLIs non-empty:**  
+**Minimum to keep the core Landing SLIs non-empty:**
 `total`, `success`, `client_error`
 
 ---
@@ -664,7 +661,7 @@ Dashboards are most useful when the underlying count metrics exist. The table be
 | Non‑NXDOMAIN client error % by zone | `total` + `client_error` + `nxdomain` | `(ClientError − NXDOMAIN) / Total` |
 | “Client error by zone (Top‑N style)” | `client_error` | SEARCH over `ZoneClientError` |
 
-**Minimum to keep Investigations meaningfully populated:**  
+**Minimum to keep Investigations meaningfully populated:**
 `total`, `nxdomain`, `client_error`
 
 ---
@@ -677,18 +674,18 @@ Dashboards are most useful when the underlying count metrics exist. The table be
 | Global query type breakdown | `total` | reads `ZoneQtype*` (created under `total`) |
 | Global protocol breakdown (UDP vs TCP) | `total` + `proto_tcp` | UDP derived as `Total − TCP` |
 
-**Minimum for Deep Forensics to be non-empty:**  
+**Minimum for Deep Forensics to be non-empty:**
 `total`, `client_error`, `nxdomain`, `refused`, `server_error`, `proto_tcp`
 
 ---
 
 ### Per-zone dashboards — minimums
 
-**Zone dashboard (per zone):**  
-Minimum for a complete experience: `total`, `success`, `client_error`, `nxdomain`, `refused`, `server_error`, `proto_tcp`, `edns_failure`  
+**Zone dashboard (per zone):**
+Minimum for a complete experience: `total`, `success`, `client_error`, `nxdomain`, `refused`, `server_error`, `proto_tcp`, `edns_failure`
 (Partial enablement is supported; only widgets whose inputs exist will show data.)
 
-**Zone Top‑N dashboard (per zone):**  
+**Zone Top‑N dashboard (per zone):**
 No `act_metric` requirement. Depends on log availability and correct parsing.
 
 ---
@@ -697,7 +694,6 @@ No `act_metric` requirement. Depends on log availability and correct parsing.
 
 - The dashboard still exists (created via `act_dashboard`), but metric-backed widgets with missing inputs will show **No data** / empty charts or `-` values.
 - If only some metrics are enabled, the dashboard will be partially populated (only widgets with enabled inputs will show data).
-
 
 ---
 
@@ -756,9 +752,9 @@ Configure via:
 Pro includes an automated license watcher that continuously validates your Pro entitlement and protects your account from “silent entitlement drift” if licensing becomes invalid.
 
 **How it works**
-- Runs on a scheduled heartbeat (EventBridge) and validates your license against the Codreum license endpoint. 
+- Runs on a scheduled heartbeat (EventBridge) and validates your license against the Codreum license endpoint.
 - Uses adaptive polling: normal operation runs at 8-hour intervals, and switches to hourly checks while a license issue is detected.
-- Publishes a CloudWatch status metric (Codreum/License, metric name Status by default) with dimension LicenseId where 1 = OK and 0 = FAIL. 
+- Publishes a CloudWatch status metric (Codreum/License, metric name Status by default) with dimension LicenseId where 1 = OK and 0 = FAIL.
 - Persists state in DynamoDB (e.g., when failures started, last notification time, and what was modified during enforcement) to ensure idempotent behavior and safe recovery.
 
 **Operator-friendly notifications**
@@ -768,7 +764,7 @@ Pro includes an automated license watcher that continuously validates your Pro e
 **Automatic enforcement (only on sustained failure)**
 
 If license validation fails continuously for 72 hours, the watcher applies enforcement to Codreum-managed resources:
-- disables CloudWatch alarm actions (excluding the license alarm), 
+- disables CloudWatch alarm actions (excluding the license alarm),
 - disables Contributor Insights rules (by prefix),
 - deletes Codreum-managed dashboards (by prefix).
 - The license alarm is never disabled, so licensing issues remain visible even during enforcement.
@@ -786,7 +782,6 @@ When the license returns to OK, the watcher rolls back enforcement by restoring 
 
 <details>
 <summary><strong>Configuration</strong></summary>
-
 
 ### Required inputs
 
@@ -868,8 +863,8 @@ Each of these enables one or more Contributor Insights rules for the zone.
 
 Static thresholds are great when you know what “bad” looks like. But DNS traffic is often **seasonal** (diurnal / weekday patterns) and varies wildly by zone. Anomaly alarms complement static alarms by alerting when a signal deviates from its **own historical baseline**, without hand‑tuning thresholds for every zone.
 
-> **Not the same thing as “CloudWatch Logs anomaly detectors.”**  
-> This section is about **CloudWatch *metric* anomaly detection alarms** (Metric Math + `ANOMALY_DETECTION_BAND`).  
+> **Not the same thing as “CloudWatch Logs anomaly detectors.”**
+> This section is about **CloudWatch *metric* anomaly detection alarms** (Metric Math + `ANOMALY_DETECTION_BAND`).
 > The “Optional log group management” section refers to **CloudWatch Logs anomaly detectors**, which analyze log event patterns.
 
 ### What anomaly alarms do (and don’t do)
@@ -922,7 +917,7 @@ For rate/percent anomaly alarms, **m1 is an expression** (e.g., `100 * NXDOMAIN 
 
 ---
 
-### Notifications: “shadow mode” by default
+### Notifications: “shadow mode” by defaul
 
 Anomaly alarms are commonly enabled in **shadow mode** first:
 
@@ -1000,15 +995,15 @@ These dependencies are validated at apply time and explain the “transitive” 
 
 Use `metric_override` to tune sensitivity and notification behavior **per ZoneId and per metric key**:
 
-- `anomaly_band_width`  
+- `anomaly_band_width`
   Smaller = tighter band (more sensitive). Larger = wider band (less sensitive).
-- `anomaly_eval_periods`  
+- `anomaly_eval_periods`
   More periods = fewer false positives, but slower detection.
-- `anomaly_actions_enabled`  
+- `anomaly_actions_enabled`
   Controls whether the anomaly alarm sends notifications.
-- `static_actions_enabled`  
+- `static_actions_enabled`
   Controls whether the static alarm sends notifications (useful for anomaly‑only trial mode).
-- `period_seconds`, `eval_periods`, `datapoints_to_alarm`, `treat_missing_data`  
+- `period_seconds`, `eval_periods`, `datapoints_to_alarm`, `treat_missing_data`
   Standard CloudWatch alarm behavior knobs (also used by static alarms).
 
 ---
@@ -1128,7 +1123,6 @@ In addition to the “CI pack” flags below, enabling some **core signal flags*
 
 **Note:** Even when an anomaly flag exists, the anomaly alarm’s **notifications are disabled by default** (`anomaly_actions_enabled = false`) until you explicitly turn them on.
 
-
 ---
 
 ### `act_dashboard`
@@ -1201,7 +1195,7 @@ Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 **Widgets included:**
 
-- **Header text widget** with per-zone links and investigation checklist
+- **Header text widget** with per-zone links and investigation checklis
 - **Fleet-wide hotspots** (time series, by zone)
   - Total DNS volume by zone
   - NXDOMAIN volume by zone

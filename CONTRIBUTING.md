@@ -2,7 +2,7 @@
 
 Thanks for your interest in contributing to **terraform-aws-dns-monitoring-free**.
 
-## Scope & support
+## Scope & suppor
 
 - **Free module** support is via **GitHub Issues**.
 - For **Pro/Paid** offerings, please refer to Codreum support/SLA channels.
@@ -22,7 +22,7 @@ If you use Chocolatey:
 # Run PowerShell as Administrator
 choco install terraform -y
 choco install terraform-docs -y
-python -m pip install --user pre-commit
+python -m pip install --user pre-commi
 ```
 
 ## Local checks (required before PR)
@@ -35,7 +35,7 @@ From repo root:
 python -m pre_commit install
 ```
 
-### 1) Format
+### 1) Forma
 
 ```bash
 terraform fmt -recursive

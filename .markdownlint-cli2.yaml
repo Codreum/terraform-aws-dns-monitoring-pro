@@ -2,7 +2,7 @@ config:
   MD013: false   # allow long lines (Terraform snippets, URLs)
   MD033: false   # allow inline HTML (<details>)
   MD024:
-    siblings_only: true
+    siblings_only: true  # allow repeated headings like "### Added" in changelogs
 globs:
   - "**/*.md"
 ignores:
