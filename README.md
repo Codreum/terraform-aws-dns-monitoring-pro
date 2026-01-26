@@ -103,9 +103,325 @@ This solution uses your **real Route 53 hosted zone query logs** already in Clou
 
 ---
 
-## What you get (Pro)
+## Get Pro (Pricing → Purchase → License → Connect Terraform)
 
-### 1) Metrics (CloudWatch namespace: `Codreum/DNSCI`)
+This repository contains **templates + docs only**. The **Pro module code** is delivered via the **Codreum private Terraform registry**.
+
+1) **See plans & pricing**: https://www.codreum.com/products.html  
+2) **Purchase / manage licenses** (login): https://www.codreum.com/licenses.html  
+3) In your license page, click **Connect Terraform** to get a short-lived code  
+4) Run:
+
+```
+codreum connect --code CT-REPLACE-ME
+terraform init
+terraform apply
+```
+Need help ? Contact: https://www.codreum.com/contact.html
+
+---
+
+## Table of contents
+- [License](#License)
+- [Quickstart](#quickstart)
+- [Templates](#templates)
+- [Costs](#costs-aws-billed)
+- [Security & data](#security--data)
+- [Limitations](#Limitations)
+- [Support](#support)
+- [Reference](#reference)
+
+---
+
+## License (important)
+This repo (docs + templates) is Apache-2.0.  
+The **Pro module code** is distributed via the **Codreum private Terraform registry** under commercial terms.
+See: [LICENSE_SCOPE.md](LICENSE_SCOPE.md)
+
+---
+
+## Quickstart
+
+This module is delivered through the **Codreum private Terraform registry**. The quickstart flow is:
+
+1) Ensure Route 53 hosted zone query logs are flowing to CloudWatch Logs (in **`us-east-1`**).  
+2) Purchase Pro and obtain your **License ID** and **registry access**.  
+3) Run **Codreum CLI** to authenticate Terraform to `registry.codreum.com`.  
+4) Add the module to `main.tf`, configure inputs, then run `terraform init/plan/apply`.
+
+---
+
+### 0) Prerequisites
+
+- Terraform **>= 1.14.0**
+- AWS provider **>= 6.2.0**
+- Providers required: hashicorp/aws, hashicorp/http, hashicorp/archive
+- A Route 53 **public** hosted zone with **Query logging** enabled
+- **Region constraint:** for hosted zone query logging, the destination log group must be in **`us-east-1`** and this module should be deployed in **`us-east-1`**
+- Your Codreum Pro subscription details:
+  - **License ID** (used for license validation at apply time)
+  - Access to the **Codreum registry** (`registry.codreum.com`) via Codreum CLI
+- Outbound HTTPS access from your Terraform runner (and from the license watcher Lambda if enabled) to reach Codreum’s license endpoint
+
+---
+
+### 1) Confirm hosted zone query logs are flowing
+
+For each hosted zone you want to monitor:
+
+1. In Route 53, enable **Query logging** for the hosted zone.
+2. Configure the destination as a CloudWatch Logs log group in **`us-east-1`**.
+3. Confirm log events are arriving in the log group.
+
+> If logs are already flowing into CloudWatch Logs, you can proceed.
+
+---
+
+### 2) Purchase Pro and retrieve your License ID
+
+After purchasing Pro from Codreum, you will receive:
+
+- a **License ID** (used by Terraform to validate entitlement for the specified ZoneId list)
+- access to Codreum’s **private Terraform registry**
+
+---
+
+### 3) Authenticate Terraform to the Codreum registry (Codreum CLI)
+
+From the Codreum **License** page, open your license and click **Connect Terraform**.  
+A dialog will provide a short-lived connection code and the exact command to run, for example:
+
+```bash
+# Run this on the machine where you run Terraform
+codreum connect --code CT-EXAMPLE-REPLACE-ME
+
+# Then run terraform init/apply as usual.
+# (The CLI writes Terraform registry credentials locally.)
+```
+
+Notes:
+- The connection code expires quickly (typically a few minutes). If it expires, click **Connect Terraform** again to get a new code.
+- You can place the `codreum` CLI binary in the same folder as your `main.tf`, or anywhere on your `PATH`.
+
+---
+
+### 4) Add the module to Terraform
+
+Set the module source to the Codreum registry:
+
+```hcl
+module "dnsciz" {
+  source  = "registry.codreum.com/codreum/dnsciz/aws"
+  version = "1.0.0"
+
+  prefix     = "acme-prod"
+  aws_region = "us-east-1" # required for hosted zone query logs
+
+  license = {
+    type       = "dnsciz"
+    license_id = "lic_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+    # One deployment can cover many hosted zones
+    zone_ids = ["Z123EXAMPLE", "Z456EXAMPLE"]
+  }
+
+  # Map each ZoneId to the CloudWatch Logs group that contains its query logs.
+  # Value must be log group ARN.
+  subject_log_group_map = {
+    "Z123EXAMPLE" = "arn:aws:logs:us-east-1:123456789012:log-group:/aws/route53/zone-Z123:*"
+    "Z456EXAMPLE" = "arn:aws:logs:us-east-1:123456789012:log-group:/aws/route53/zone-Z456:*"
+  }
+
+  # Enable per-zone features (include "total" for ratio-based signals and dashboards)
+  act_metric = {
+    "Z123EXAMPLE" = ["total", "nxdomain", "server_error", "refused", "success", "client_error", "overall_error", "rare_error", "proto_tcp", "edns_failure"]
+    "Z456EXAMPLE" = ["total", "nxdomain", "nxdomain_rate_anom"]
+  }
+
+  # Create global dashboards + per-zone dashboards by ZoneId
+  act_dashboard = ["opslanding", "investigation", "forensic", "Z123EXAMPLE", "Z456EXAMPLE"]
+}
+```
+
+> Tip: Start with a single zone and a small `act_metric` set, validate signal quality and alert routing, then expand to more zones/CI packs.
+
+---
+
+### 5) Deploy
+
+After authenticating to the registry (Step 3), run:
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+During `terraform apply`, the module validates your license for the target AWS account and ZoneIds. If validation succeeds, the module provisions CloudWatch metrics, alarms, dashboards, and Contributor Insights rules into your AWS account.
+
+## How it works
+
+1. **License check (fail fast)**
+   On `terraform apply`, the module validates account/product/ZoneIds. If validation fails, apply fails.
+
+2. **Metrics from logs**
+   CloudWatch Logs **metric filters** match fields from Route 53 hosted zone query logs (CLF) and publish metrics into `Codreum/DNSCI` with `ZoneId` as a dimension.
+
+3. **Alarms**
+   Alarms are created per zone for the enabled signals:
+   - count alarms, rate alarms, and optional anomaly alarms
+   - notifications routed via SNS (global default or per-zone override)
+
+4. **Contributor Insights rules**
+   CI rules read the same log groups and compute Top‑N / profiles used by the dashboards.
+
+5. **Dashboards**
+   Dashboards are created only when requested via `act_dashboard`, and are designed to guide incident response:
+   - start at Ops landing
+   - identify hotspots in Investigations
+   - use Deep Forensics for longer-window global mix breakdowns
+
+---
+
+## Templates
+
+This repository includes a curated set of **Terraform `main.tf` templates** for Codreum **DNSCI-Z (Hosted Zone) Pro**.  
+Each template is **standalone**, **copy/paste-ready**, and mapped to a real operational scenario (fleet dashboards, per-zone operations, phased rollout, anomaly-first alerting, log management, log forwarding, and alerting-only deployments).
+
+### Where to find templates
+
+Templates are organized under the `templates/` directory:
+
+- [`templates/01-all-dashboards/`](templates/01-all-dashboards/)
+- [`templates/02-ops-landing-only/`](templates/02-ops-landing-only/)
+- [`templates/03-investigations-only/`](templates/03-investigations-only/)
+- [`templates/04-deep-forensics-only/`](templates/04-deep-forensics-only/)
+- [`templates/05-per-zone-only/`](templates/05-per-zone-only/)
+- [`templates/06-sensible-default/`](templates/06-sensible-default/)
+- [`templates/07-log-management-slack-email/`](templates/07-log-management-slack-email/)
+- [`templates/08-alarms-only-slack-email/`](templates/08-alarms-only-slack-email/)
+- [`templates/09-per-zone-topn-alarms/`](templates/09-per-zone-topn-alarms/)
+- [`templates/10-phased-rollout/`](templates/10-phased-rollout)
+- [`templates/11-topn-only-no-metrics/`](templates/11-topn-only-no-metrics/)
+- [`templates/12-per-zone-routing-kms-sns/`](templates/12-per-zone-routing-kms-sns/)
+- [`templates/13-anomaly-centric-alerting/`](templates/13-anomaly-centric-alerting/)
+- [`templates/14-dashboard-ux-slo-tuning/`](templates/14-dashboard-ux-slo-tuning/)
+- [`templates/15-forward-subset-logs-subscription-filters/`](templates/15-forward-subset-logs-subscription-filters/)
+- [`templates/16-sms-paging-only/`](templates/16-sms-paging-only/)
+- [`templates/17-webhook-https-alerting/`](templates/17-webhook-https-alerting/)
+- [`templates/18-least-privilege-no-zone-lookup/`](templates/18-least-privilege-no-zone-lookup/)
+- [`templates/19-ci-only-hunting-pack/`](templates/19-ci-only-hunting-pack/)
+- [`templates/20-log-hygiene-dp-indexing-no-anomaly/`](templates/20-log-hygiene-dp-indexing-no-anomaly/)
+
+
+Each template folder contains:
+- `main.tf` — a complete runnable example
+
+### How to use a template
+
+1. Pick the template that matches your rollout plan or operating model (see “Quick pick guide” below).
+2. Copy the folder (or work directly inside it).
+3. Replace placeholders in `main.tf`:
+   - `lic_xxxxx...` → your Codreum License ID
+   - `Z123...` → your Route 53 hosted zone IDs
+   - log group ARNs in `subject_log_group_map`
+   - Slack IDs if enabling Slack notifications
+   - `prefix` and `tags`
+4. Deploy with Terraform:
+
+```bash
+cd templates/<chosen-template>
+terraform init
+terraform plan
+terraform apply
+```
+
+### Dashboards vs metrics: what controls what?
+
+DNSCI-Z separates **dashboard creation** from **widget data availability**:
+
+- `act_dashboard` controls **which CloudWatch dashboards are created**.
+- Most dashboards are **metric-backed**, so widget data depends on `act_metric`.
+  - `act_metric` turns Route 53 query logs into `Codreum/DNSCI` CloudWatch custom metrics (via metric filters).
+  - If a required metric is not enabled, the dashboard still exists, but impacted widgets may show **No data**, blank charts, or `-` tiles.
+
+**Zone Top-N dashboards are the exception:**  
+Top-N tables are **CloudWatch Logs Insights widgets**, so they do **not** require `act_metric`. They **do** require Route 53 query logs to be flowing to the configured log group and parseable with the expected fields.
+
+> Practical rule: `act_dashboard` controls **whether the dashboard exists**; `act_metric` controls **whether most widgets have data**.
+
+### Quick pick guide
+
+- **Want everything** → Template 01  
+- **Fleet health only** → Template 02  
+- **Cross-zone triage only** → Template 03  
+- **Global breakdowns only** → Template 04  
+- **Zone-focused ops** → Template 05 (dashboards) or Template 09 (dashboards + alarms + notifications)  
+- **Best default for production** → Template 06  
+- **Need log management + Slack/email** → Template 07  
+- **Alerting only (no dashboards)** → Template 08  
+- **Phased rollout (dashboards first)** → Template 10  
+- **Top‑N only, minimal spend** → Template 11  
+- **Different paging per zone + KMS** → Template 12  
+- **Seasonal traffic → anomaly-first** → Template 13  
+- **Tune dashboard time windows + SLOs** → Template 14  
+- **Stream a filtered subset of logs** → Template 15
+- **SMS paging only (alarms-only)** → Template 16  
+- **Webhook / HTTPS endpoints (SNS HTTPS)** → Template 17  
+- **Least-privilege deploy (no Route 53 GetHostedZone)** → Template 18  
+- **Threat hunting / CI-only pack (+ Top-N + indexing)** → Template 19  
+- **Log hygiene (Data Protection + indexing) with anomaly detectors disabled** → Template 20
+
+
+## Costs (AWS billed)
+
+This module creates CloudWatch resources that may incur AWS charges depending on region and usage.
+
+Typical cost drivers:
+
+- Custom metrics published by log metric filters (`Codreum/DNSCI`)
+- CloudWatch alarms (static + anomaly)
+- Contributor Insights rules (Top‑N / profiles / matrices)
+- Logs Insights queries you run from dashboards (charged per GB scanned)
+
+Recommendation: start with a small `act_metric` set for one zone, validate signal value, then scale out.
+
+---
+
+## Security & data
+
+- DNS logs remain in **your AWS account** (CloudWatch Logs).
+- The module’s licensing check makes an HTTPS request to Codreum to validate your subscription (no DNS logs are sent).
+- Notifications are delivered only through the SNS destinations you configure.
+
+---
+
+## Limitations
+
+- This module (DNSCI-Z) is for **hosted zone query logs**.
+- Hosted zone query logging requires **`us-east-1`** for the destination log group.
+- Requires Route 53 hosted zone query logs in **CLF** format (fields like `hosted_zone_id`, `qname`, `qtype`, `rcode`, `proto`, `edge`, `rip`, `edns`).
+- Dashboards expect the underlying metrics to be enabled; disabling signals may produce empty tiles.
+
+---
+
+## Support
+
+- Pro customers: reach out via your Codreum support channel (email / ticket portal as provided with your subscription).
+- If this repo is mirrored internally, file an issue with:
+  - your `prefix`
+  - affected ZoneId(s)
+  - which `act_metric` flags are enabled
+  - the CloudWatch alarm name(s) / dashboard name(s)
+
+---
+
+## Reference
+
+<details>
+<summary><strong>What you get (Pro)</strong></summary>
+
+<### 1) Metrics (CloudWatch namespace: `Codreum/DNSCI`)
 
 Per hosted zone (dimension: `ZoneId`), Pro turns Route 53 hosted-zone query logs into actionable DNS health signals. It publishes a small set of count metrics, then presents rates/percentages in dashboards and alarms for fast triage (all in your AWS account).
 
@@ -452,155 +768,14 @@ Enforcement targets Codreum-managed resources created by this module (by prefix)
 When the license returns to OK, the watcher rolls back enforcement by restoring alarm actions / insight rules and recreating minimal placeholder dashboards (full dashboards should be re-applied via Terraform).
 
 **Tip** — Alarm on `Codreum/License` `Status == 0` (per `LicenseId`) so license issues page the right team immediately, before enforcement becomes relevant.
+>
 
----
+</details>
 
-## Quickstart
+<details>
+<summary><strong>Configuration</strong></summary>
 
-This module is delivered through the **Codreum private Terraform registry**. The quickstart flow is:
-
-1) Ensure Route 53 hosted zone query logs are flowing to CloudWatch Logs (in **`us-east-1`**).  
-2) Purchase Pro and obtain your **License ID** and **registry access**.  
-3) Run **Codreum CLI** to authenticate Terraform to `registry.codreum.com`.  
-4) Add the module to `main.tf`, configure inputs, then run `terraform init/plan/apply`.
-
----
-
-### 0) Prerequisites
-
-- Terraform **>= 1.14.0**
-- AWS provider **>= 6.2.0**
-- Providers required: hashicorp/aws, hashicorp/http, hashicorp/archive
-- A Route 53 **public** hosted zone with **Query logging** enabled
-- **Region constraint:** for hosted zone query logging, the destination log group must be in **`us-east-1`** and this module should be deployed in **`us-east-1`**
-- Your Codreum Pro subscription details:
-  - **License ID** (used for license validation at apply time)
-  - Access to the **Codreum registry** (`registry.codreum.com`) via Codreum CLI
-- Outbound HTTPS access from your Terraform runner (and from the license watcher Lambda if enabled) to reach Codreum’s license endpoint
-
----
-
-### 1) Confirm hosted zone query logs are flowing
-
-For each hosted zone you want to monitor:
-
-1. In Route 53, enable **Query logging** for the hosted zone.
-2. Configure the destination as a CloudWatch Logs log group in **`us-east-1`**.
-3. Confirm log events are arriving in the log group.
-
-> If logs are already flowing into CloudWatch Logs, you can proceed.
-
----
-
-### 2) Purchase Pro and retrieve your License ID
-
-After purchasing Pro from Codreum, you will receive:
-
-- a **License ID** (used by Terraform to validate entitlement for the specified ZoneId list)
-- access to Codreum’s **private Terraform registry**
-
----
-
-### 3) Authenticate Terraform to the Codreum registry (Codreum CLI)
-
-From the Codreum **License** page, open your license and click **Connect Terraform**.  
-A dialog will provide a short-lived connection code and the exact command to run, for example:
-
-```bash
-# Run this on the machine where you run Terraform
-codreum connect --code CT-EXAMPLE-REPLACE-ME
-
-# Then run terraform init/apply as usual.
-# (The CLI writes Terraform registry credentials locally.)
-```
-
-Notes:
-- The connection code expires quickly (typically a few minutes). If it expires, click **Connect Terraform** again to get a new code.
-- You can place the `codreum` CLI binary in the same folder as your `main.tf`, or anywhere on your `PATH`.
-
----
-
-### 4) Add the module to Terraform
-
-Set the module source to the Codreum registry:
-
-```hcl
-module "dnsciz" {
-  source  = "registry.codreum.com/codreum/dnsciz/aws"
-  version = "1.0.0"
-
-  prefix     = "acme-prod"
-  aws_region = "us-east-1" # required for hosted zone query logs
-
-  license = {
-    type       = "dnsciz"
-    license_id = "lic_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
-    # One deployment can cover many hosted zones
-    zone_ids = ["Z123EXAMPLE", "Z456EXAMPLE"]
-  }
-
-  # Map each ZoneId to the CloudWatch Logs group that contains its query logs.
-  # Value must be log group ARN.
-  subject_log_group_map = {
-    "Z123EXAMPLE" = "arn:aws:logs:us-east-1:123456789012:log-group:/aws/route53/zone-Z123:*"
-    "Z456EXAMPLE" = "arn:aws:logs:us-east-1:123456789012:log-group:/aws/route53/zone-Z456:*"
-  }
-
-  # Enable per-zone features (include "total" for ratio-based signals and dashboards)
-  act_metric = {
-    "Z123EXAMPLE" = ["total", "nxdomain", "server_error", "refused", "success", "client_error", "overall_error", "rare_error", "proto_tcp", "edns_failure"]
-    "Z456EXAMPLE" = ["total", "nxdomain", "nxdomain_rate_anom"]
-  }
-
-  # Create global dashboards + per-zone dashboards by ZoneId
-  act_dashboard = ["opslanding", "investigation", "forensic", "Z123EXAMPLE", "Z456EXAMPLE"]
-}
-```
-
-> Tip: Start with a single zone and a small `act_metric` set, validate signal quality and alert routing, then expand to more zones/CI packs.
-
----
-
-### 5) Deploy
-
-After authenticating to the registry (Step 3), run:
-
-```bash
-terraform init
-terraform plan
-terraform apply
-```
-
-During `terraform apply`, the module validates your license for the target AWS account and ZoneIds. If validation succeeds, the module provisions CloudWatch metrics, alarms, dashboards, and Contributor Insights rules into your AWS account.
-
-## How it works
-
-1. **License check (fail fast)**
-   On `terraform apply`, the module validates account/product/ZoneIds. If validation fails, apply fails.
-
-2. **Metrics from logs**
-   CloudWatch Logs **metric filters** match fields from Route 53 hosted zone query logs (CLF) and publish metrics into `Codreum/DNSCI` with `ZoneId` as a dimension.
-
-3. **Alarms**
-   Alarms are created per zone for the enabled signals:
-   - count alarms, rate alarms, and optional anomaly alarms
-   - notifications routed via SNS (global default or per-zone override)
-
-4. **Contributor Insights rules**
-   CI rules read the same log groups and compute Top‑N / profiles used by the dashboards.
-
-5. **Dashboards**
-   Dashboards are created only when requested via `act_dashboard`, and are designed to guide incident response:
-   - start at Ops landing
-   - identify hotspots in Investigations
-   - use Deep Forensics for longer-window global mix breakdowns
-
----
-
-## Configuration
-
-### Required inputs
+<### Required inputs
 
 - `prefix`
 - `aws_region`
@@ -954,11 +1129,14 @@ In addition to the “CI pack” flags below, enabling some **core signal flags*
 
 - Per-zone dashboards: include any ZoneId from your license in `act_dashboard`.
 
----
+>
 
-## Dashboards
+</details>
 
-Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
+<details>
+<summary><strong>Dashboards</strong></summary>
+
+<Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 - `${prefix}-dnsciz-dns-ops-landing`
 - `${prefix}-dnsciz-dns-ops-investigate`
@@ -1079,136 +1257,6 @@ These dashboards are the primary place to:
 - correlate spikes in zone metrics (NXDOMAIN / REFUSED / SERVFAIL / error % / success %)
 - investigate QTYPE mix for the zone
 - drill into the Top‑N / CI views (qname, qtype, edge, client)
+>
 
----
-
-## Templates
-
-This repository includes a curated set of **Terraform `main.tf` templates** for Codreum **DNSCI-Z (Hosted Zone) Pro**.  
-Each template is **standalone**, **copy/paste-ready**, and mapped to a real operational scenario (fleet dashboards, per-zone operations, phased rollout, anomaly-first alerting, log management, log forwarding, and alerting-only deployments).
-
-### Where to find templates
-
-Templates are organized under the `templates/` directory:
-
-- [`templates/01-all-dashboards/`](templates/01-all-dashboards/)
-- [`templates/02-ops-landing-only/`](templates/02-ops-landing-only/)
-- [`templates/03-investigations-only/`](templates/03-investigations-only/)
-- [`templates/04-deep-forensics-only/`](templates/04-deep-forensics-only/)
-- [`templates/05-per-zone-only/`](templates/05-per-zone-only/)
-- [`templates/06-sensible-default/`](templates/06-sensible-default/)
-- [`templates/07-log-management-slack-email/`](templates/07-log-management-slack-email/)
-- [`templates/08-alarms-only-slack-email/`](templates/08-alarms-only-slack-email/)
-- [`templates/09-per-zone-topn-alarms/`](templates/09-per-zone-topn-alarms/)
-- [`templates/10-phased-rollout/`](templates/10-phased-rollout)
-- [`templates/11-topn-only-no-metrics/`](templates/11-topn-only-no-metrics/)
-- [`templates/12-per-zone-routing-kms-sns/`](templates/12-per-zone-routing-kms-sns/)
-- [`templates/13-anomaly-centric-alerting/`](templates/13-anomaly-centric-alerting/)
-- [`templates/14-dashboard-ux-slo-tuning/`](templates/14-dashboard-ux-slo-tuning/)
-- [`templates/15-forward-subset-logs-subscription-filters/`](templates/15-forward-subset-logs-subscription-filters/)
-- [`templates/16-sms-paging-only/`](templates/16-sms-paging-only/)
-- [`templates/17-webhook-https-alerting/`](templates/17-webhook-https-alerting/)
-- [`templates/18-least-privilege-no-zone-lookup/`](templates/18-least-privilege-no-zone-lookup/)
-- [`templates/19-ci-only-hunting-pack/`](templates/19-ci-only-hunting-pack/)
-- [`templates/20-log-hygiene-dp-indexing-no-anomaly/`](templates/20-log-hygiene-dp-indexing-no-anomaly/)
-
-
-Each template folder contains:
-- `main.tf` — a complete runnable example
-
-### How to use a template
-
-1. Pick the template that matches your rollout plan or operating model (see “Quick pick guide” below).
-2. Copy the folder (or work directly inside it).
-3. Replace placeholders in `main.tf`:
-   - `lic_xxxxx...` → your Codreum License ID
-   - `Z123...` → your Route 53 hosted zone IDs
-   - log group ARNs in `subject_log_group_map`
-   - Slack IDs if enabling Slack notifications
-   - `prefix` and `tags`
-4. Deploy with Terraform:
-
-```bash
-cd templates/<chosen-template>
-terraform init
-terraform plan
-terraform apply
-```
-
-### Dashboards vs metrics: what controls what?
-
-DNSCI-Z separates **dashboard creation** from **widget data availability**:
-
-- `act_dashboard` controls **which CloudWatch dashboards are created**.
-- Most dashboards are **metric-backed**, so widget data depends on `act_metric`.
-  - `act_metric` turns Route 53 query logs into `Codreum/DNSCI` CloudWatch custom metrics (via metric filters).
-  - If a required metric is not enabled, the dashboard still exists, but impacted widgets may show **No data**, blank charts, or `-` tiles.
-
-**Zone Top-N dashboards are the exception:**  
-Top-N tables are **CloudWatch Logs Insights widgets**, so they do **not** require `act_metric`. They **do** require Route 53 query logs to be flowing to the configured log group and parseable with the expected fields.
-
-> Practical rule: `act_dashboard` controls **whether the dashboard exists**; `act_metric` controls **whether most widgets have data**.
-
-### Quick pick guide
-
-- **Want everything** → Template 01  
-- **Fleet health only** → Template 02  
-- **Cross-zone triage only** → Template 03  
-- **Global breakdowns only** → Template 04  
-- **Zone-focused ops** → Template 05 (dashboards) or Template 09 (dashboards + alarms + notifications)  
-- **Best default for production** → Template 06  
-- **Need log management + Slack/email** → Template 07  
-- **Alerting only (no dashboards)** → Template 08  
-- **Phased rollout (dashboards first)** → Template 10  
-- **Top‑N only, minimal spend** → Template 11  
-- **Different paging per zone + KMS** → Template 12  
-- **Seasonal traffic → anomaly-first** → Template 13  
-- **Tune dashboard time windows + SLOs** → Template 14  
-- **Stream a filtered subset of logs** → Template 15
-- **SMS paging only (alarms-only)** → Template 16  
-- **Webhook / HTTPS endpoints (SNS HTTPS)** → Template 17  
-- **Least-privilege deploy (no Route 53 GetHostedZone)** → Template 18  
-- **Threat hunting / CI-only pack (+ Top-N + indexing)** → Template 19  
-- **Log hygiene (Data Protection + indexing) with anomaly detectors disabled** → Template 20
-
-
-## Costs (AWS billed)
-
-This module creates CloudWatch resources that may incur AWS charges depending on region and usage.
-
-Typical cost drivers:
-
-- Custom metrics published by log metric filters (`Codreum/DNSCI`)
-- CloudWatch alarms (static + anomaly)
-- Contributor Insights rules (Top‑N / profiles / matrices)
-- Logs Insights queries you run from dashboards (charged per GB scanned)
-
-Recommendation: start with a small `act_metric` set for one zone, validate signal value, then scale out.
-
----
-
-## Security & data
-
-- DNS logs remain in **your AWS account** (CloudWatch Logs).
-- The module’s licensing check makes an HTTPS request to Codreum to validate your subscription (no DNS logs are sent).
-- Notifications are delivered only through the SNS destinations you configure.
-
----
-
-## Limitations
-
-- This module (DNSCI-Z) is for **hosted zone query logs**.
-- Hosted zone query logging requires **`us-east-1`** for the destination log group.
-- Requires Route 53 hosted zone query logs in **CLF** format (fields like `hosted_zone_id`, `qname`, `qtype`, `rcode`, `proto`, `edge`, `rip`, `edns`).
-- Dashboards expect the underlying metrics to be enabled; disabling signals may produce empty tiles.
-
----
-
-## Support
-
-- Pro customers: reach out via your Codreum support channel (email / ticket portal as provided with your subscription).
-- If this repo is mirrored internally, file an issue with:
-  - your `prefix`
-  - affected ZoneId(s)
-  - which `act_metric` flags are enabled
-  - the CloudWatch alarm name(s) / dashboard name(s)
+</details>
