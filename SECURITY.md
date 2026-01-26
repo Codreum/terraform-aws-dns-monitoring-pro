@@ -6,7 +6,7 @@ If you discover a security issue, please **do not** open a public GitHub issue.
 
 Instead, report it privately:
 
-* Email: support@codreum.com
+* Email: [support@codreum.com](mailto:support@codreum.com)
 * Include:
 
   * Description of the issue

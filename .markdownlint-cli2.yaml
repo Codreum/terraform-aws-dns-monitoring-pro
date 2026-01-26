@@ -1,6 +1,8 @@
 config:
   MD013: false   # allow long lines (Terraform snippets, URLs)
   MD033: false   # allow inline HTML (<details>)
+  MD024:
+    siblings_only: true
 globs:
   - "**/*.md"
 ignores:

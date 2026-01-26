@@ -7,25 +7,28 @@ The format is based on *Keep a Changelog* and this project follows *Semantic Ver
 ## [Unreleased]
 
 ### Added
-- 
+
+-
 
 ### Changed
-- 
+
+-
 
 ### Fixed
-- 
+
+-
 
 ### Security
-- 
 
+-
 
 ## [0.1.0] - 2026-01-06
 
 ### Added
+
 - Initial public release of the DNS monitoring (free) Terraform module.
 - CloudWatch dashboards, alarms, and metric filters for NXDOMAIN monitoring (Zone and VPC modes).
 - Example configurations under `example/`.
-
 
 <!--
 Release process (suggested):
