@@ -13,22 +13,35 @@ This project is an infrastructure/IaC module. Discussions may include production
 Examples of behavior that contributes to a positive environment include:
 
 - Being respectful, considerate, and constructive
+
 - Using welcoming and inclusive language
+
 - Giving and receiving feedback professionally (assume good intent; focus on the work)
+
 - Being mindful of how communication tone can be interpreted in tex
+
 - Prioritizing safety and correctness when discussing infrastructure changes
+
 - Respecting differing viewpoints and experiences
+
 - Gracefully accepting responsibility and apologizing when appropriate
 
 Examples of unacceptable behavior include:
 
 - Harassment, intimidation, discrimination, or personal attacks
+
 - Trolling, insulting or derogatory comments, or “dogpiling”
+
 - Public or private harassment, threats of violence, or encouraging harm
+
 - Publishing others’ private information (“doxxing”) without explicit permission
+
 - Sexual language or imagery, or unwelcome sexual attention
+
 - Deliberate disruption of discussions, reviews, or collaboration
+
 - Pressuring maintainers to merge changes by escalating tone or urgency
+
 - Knowingly promoting unsafe practices (e.g., encouraging insecure defaults) without clearly labeling risks and trade-offs
 
 ## Scope
@@ -36,8 +49,11 @@ Examples of unacceptable behavior include:
 This Code of Conduct applies within all project spaces and official communication channels, including but not limited to:
 
 - GitHub issues, pull requests, and discussions
+
 - Code reviews and comments
+
 - Release notes and project documentation
+
 - Any other spaces managed by the project maintainers
 
 It also applies when an individual is representing the project or its community in public spaces.
@@ -49,7 +65,9 @@ If you experience or witness unacceptable behavior, please report it as soon as 
 ### How to repor
 
 - **Preferred (private):** Email **[support@codreum.com](mailto:[support@codreum.com](mailto:support@codreum.com))**.
+
 - **If email is not possible:** Open a GitHub issue titled **[CoC] Report request** that contains **no incident details**, and ask maintainers to move the conversation to email.
+
   > Note: GitHub issues are public by default. Please do not include sensitive information (names, screenshots, logs, or details) in a public issue.
 
 - **Immediate risk / security-related concerns:** Email **[support@codreum.com](mailto:[support@codreum.com](mailto:support@codreum.com))** immediately. If the project has a `SECURITY.md`, follow that process as well.
@@ -57,8 +75,11 @@ If you experience or witness unacceptable behavior, please report it as soon as 
 ### What to include (helpful details)
 
 - Your contact information (if you want a response)
+
 - Names/handles of involved parties
+
 - Description of what happened and where it happened (links/screenshots if available)
+
 - Any relevant context (e.g., dates, times, prior incidents)
 
 All reports will be reviewed promptly and treated as confidentially as possible.

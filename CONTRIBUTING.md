@@ -5,13 +5,17 @@ Thanks for your interest in contributing to **terraform-aws-dns-monitoring-free*
 ## Scope & suppor
 
 - **Free module** support is via **GitHub Issues**.
+
 - For **Pro/Paid** offerings, please refer to Codreum support/SLA channels.
 
 ## Development prerequisites
 
 - Terraform: recommended `>= 1.14.0` (or follow repo / example constraints).
+
 - Terraform-docs: recommended `>= 0.20.0` (for auto-generated Inputs/Outputs in `modules/README.md`)
+
 - Python 3 + `pre-commit` (recommended)
+
 - AWS credentials only if you plan to run real plans/applies (not required for fmt/validate).
 
 ### Windows install tips (common)
@@ -92,22 +96,31 @@ terraform-docs markdown table --output-file modules/README.md --output-mode inje
 ## Pull requests
 
 1. Create a branch from `main`.
+
 2. Make your change with focused commits.
+
 3. Ensure CI passes.
+
 4. Open a PR with a clear title and description:
+
    - What changed
+
    - Why it changed
+
    - How it was tested
 
 ## Release / versioning
 
 - Use semver tags: `v0.1.0`, `v0.1.1`, etc.
+
 - Don’t move existing tags to new commits (publish a new version instead).
 
 ## Code style
 
 - Prefer readable Terraform: meaningful names, comments where needed.
+
 - Keep dashboards stable (avoid noisy diffs).
+
 - Avoid breaking changes in minor versions when possible.
 
 ## License
