@@ -434,7 +434,6 @@ Recommendation: start with a small `act_metric` set for one zone, validate signa
 <details>
 <summary><strong>What you get (Pro)</strong></summary>
 
-<
 ### 1) Metrics (CloudWatch namespace: `Codreum/DNSCI`)
 
 Per hosted zone (dimension: `ZoneId`), Pro turns Route 53 hosted-zone query logs into actionable DNS health signals. It publishes a small set of count metrics, then presents rates/percentages in dashboards and alarms for fast triage (all in your AWS account).
@@ -782,14 +781,13 @@ Enforcement targets Codreum-managed resources created by this module (by prefix)
 When the license returns to OK, the watcher rolls back enforcement by restoring alarm actions / insight rules and recreating minimal placeholder dashboards (full dashboards should be re-applied via Terraform).
 
 **Tip** — Alarm on `Codreum/License` `Status == 0` (per `LicenseId`) so license issues page the right team immediately, before enforcement becomes relevant.
->
 
 </details>
 
 <details>
 <summary><strong>Configuration</strong></summary>
 
-<
+
 ### Required inputs
 
 - `prefix`
@@ -1144,14 +1142,11 @@ In addition to the “CI pack” flags below, enabling some **core signal flags*
 
 - Per-zone dashboards: include any ZoneId from your license in `act_dashboard`.
 
->
-
 </details>
 
 <details>
 <summary><strong>Dashboards</strong></summary>
 
-<
 Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 - `${prefix}-dnsciz-dns-ops-landing`
@@ -1273,6 +1268,5 @@ These dashboards are the primary place to:
 - correlate spikes in zone metrics (NXDOMAIN / REFUSED / SERVFAIL / error % / success %)
 - investigate QTYPE mix for the zone
 - drill into the Top‑N / CI views (qname, qtype, edge, client)
->
 
 </details>
