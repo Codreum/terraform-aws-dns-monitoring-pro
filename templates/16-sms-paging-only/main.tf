@@ -1,4 +1,3 @@
-```hcl
 module "dnsciz" {
   source  = "registry.codreum.com/codreum/dnsciz/aws"
   version = "1.0.0"
@@ -39,4 +38,3 @@ module "dnsciz" {
 
   tags = { owner = "you", project = "dnsciz" }
 }
-```

@@ -24,7 +24,7 @@ module "dnsciz" {
   # Log Data Protection (managed identifiers)
   log_data_protection_override = {
     "/aws/route53/zone-1" = {
-      enabled             = true
+      enabled = true
       managed_identifiers = [
         "arn:aws:dataprotection::aws:data-identifier/IpAddress",
         "arn:aws:dataprotection::aws:data-identifier/EmailAddress"

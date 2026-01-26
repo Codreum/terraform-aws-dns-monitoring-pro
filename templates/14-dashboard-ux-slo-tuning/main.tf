@@ -19,12 +19,12 @@ module "dnsciz" {
   act_dashboard = ["opslanding", "investigation", "forensic", "Z123EXAMPLE1", "Z123EXAMPLE2"]
 
   # Default dashboard time windows (ISO-8601 durations)
-  dns_primary_lookback        = "-PT1H"   # Landing/Investigations/per-zone
-  dns_deep_forensics_lookback = "-PT12H"  # Forensics
+  dns_primary_lookback        = "-PT1H"  # Landing/Investigations/per-zone
+  dns_deep_forensics_lookback = "-PT12H" # Forensics
 
   # “last Xm” behavior: show the most recent bucket of this fixed period
-  dns_sli_tile_period_seconds    = 60   # last 1m
-  dns_topn_bucket_period_seconds = 120  # last 2m
+  dns_sli_tile_period_seconds    = 60  # last 1m
+  dns_topn_bucket_period_seconds = 120 # last 2m
 
   # Top-N sizing (applies to tables)
   dns_topn = 25
