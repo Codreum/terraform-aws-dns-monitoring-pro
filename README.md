@@ -121,6 +121,19 @@ Need help ? Contact: https://www.codreum.com/contact.html
 
 ---
 
+## What’s in this repo
+- Copy/paste Terraform root templates (`templates/`)
+- Docs for configuration + dashboards + operations
+- Public reference for the Pro edition
+
+---
+
+## What’s not in this repo
+- The Pro module implementation (delivered via Codreum private registry)
+
+---
+
+
 ## Table of contents
 - [License](#License)
 - [Quickstart](#quickstart)
@@ -421,7 +434,8 @@ Recommendation: start with a small `act_metric` set for one zone, validate signa
 <details>
 <summary><strong>What you get (Pro)</strong></summary>
 
-<### 1) Metrics (CloudWatch namespace: `Codreum/DNSCI`)
+<
+### 1) Metrics (CloudWatch namespace: `Codreum/DNSCI`)
 
 Per hosted zone (dimension: `ZoneId`), Pro turns Route 53 hosted-zone query logs into actionable DNS health signals. It publishes a small set of count metrics, then presents rates/percentages in dashboards and alarms for fast triage (all in your AWS account).
 
@@ -775,7 +789,8 @@ When the license returns to OK, the watcher rolls back enforcement by restoring 
 <details>
 <summary><strong>Configuration</strong></summary>
 
-<### Required inputs
+<
+### Required inputs
 
 - `prefix`
 - `aws_region`
@@ -1136,7 +1151,8 @@ In addition to the “CI pack” flags below, enabling some **core signal flags*
 <details>
 <summary><strong>Dashboards</strong></summary>
 
-<Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
+<
+Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 - `${prefix}-dnsciz-dns-ops-landing`
 - `${prefix}-dnsciz-dns-ops-investigate`
