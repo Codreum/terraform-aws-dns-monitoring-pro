@@ -1,0 +1,57 @@
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-fmt:
+    name: terraform fmt (templates)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.6"
+      - name: terraform fmt check
+        run: |
+          terraform fmt -check -recursive templates
+
+  markdownlint:
+    name: markdownlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DavidAnson/markdownlint-cli2-action@v19
+        with:
+          config: .markdownlint-cli2.yaml
+          globs: |
+            **/*.md
+
+  link-check:
+    name: link check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: lychee link check
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: >
+            --config lychee.toml
+            README.md docs/**/*.md templates/**/*.md
+
+  template-conventions:
+    name: template conventions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: validate templates
+        run: |
+          python .github/scripts/validate_templates.py

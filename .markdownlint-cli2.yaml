@@ -1,0 +1,7 @@
+config:
+  MD013: false   # allow long lines (Terraform snippets, URLs)
+  MD033: false   # allow inline HTML (<details>)
+globs:
+  - "**/*.md"
+ignores:
+  - "**/node_modules/**"

@@ -1,0 +1,13 @@
+# keep CI stable: don't fail on transient rate-limits
+timeout = 20
+max_retries = 2
+retry_wait_time = 2
+
+# ignore localhost-style or example placeholders if you have them
+exclude = [
+  "http://localhost",
+  "https://localhost"
+]
+
+# GitHub sometimes rate-limits anonymous link checks
+accept = [200, 206, 429]
