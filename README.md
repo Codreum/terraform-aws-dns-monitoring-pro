@@ -1,19 +1,19 @@
+# Codreum DNS Monitoring (Pro) — DNSCI-Z (Hosted Zone)
+
 <p align="center">
-  <a href="<https://www.codreum.com">>
+  <a href="https://www.codreum.com">
     <img src="docs/brand/logo.png" alt="Codreum" width="200" />
   </a>
 </p>
 
 <p align="center">
-  <a href="<https://www.codreum.com">>Website</a> •
+  <a href="https://www.codreum.com">Website</a> •
   <a href="#quickstart">Quickstart</a> •
   <a href="#configuration">Configuration</a> •
   <a href="#dashboards">Dashboards</a> •
   <a href="#templates">Templates</a> •
   <a href="#support">Support</a>
 </p>
-
-# Codreum DNS Monitoring (Pro) — DNSCI-Z (Hosted Zone)
 
 Production-grade DNS observability for **Route 53 hosted zone query logs** using **CloudWatch Logs → Metrics → Alarms → Dashboards → Contributor Insights**.
 
@@ -54,7 +54,7 @@ This module is designed to answer the questions that matter during incidents:
 > This README is for the **Pro / paid** edition.
 > If you only need NXDOMAIN signals, use the NXDOMAIN module instead: <https://github.com/Codreum/terraform-aws-dns-monitoring-nxdomain>
 
-### Feature comparison
+## Feature comparison
 
 | Capability | NXDOMAIN | Pro |
 |---|:---:|:---:|
@@ -157,7 +157,7 @@ Need help ? Contact: <https://www.codreum.com/contact.html>
 
 ## Table of contents
 
-- [License](#License)
+- [License](#license-important)
 
 - [Quickstart](#quickstart)
 
@@ -167,7 +167,7 @@ Need help ? Contact: <https://www.codreum.com/contact.html>
 
 - [Security & data](#security--data)
 
-- [Limitations](#Limitations)
+- [Limitations](#limitations)
 
 - [Support](#support)
 
@@ -183,7 +183,7 @@ See: [LICENSE_SCOPE.md](LICENSE_SCOPE.md)
 
 ---
 
-## Quickstar
+## Quickstart
 
 This module is delivered through the **Codreum private Terraform registry**. The quickstart flow is:
 
@@ -441,7 +441,7 @@ DNSCI-Z separates **dashboard creation** from **widget data availability**:
 
   - If a required metric is not enabled, the dashboard still exists, but impacted widgets may show **No data**, blank charts, or `-` tiles.
 
-### Zone Top-N dashboards are the exception:
+### Zone Top-N dashboards are the exception
 
 Top-N tables are **CloudWatch Logs Insights widgets**, so they do **not** require `act_metric`. They **do** require Route 53 query logs to be flowing to the configured log group and parseable with the expected fields.
 
@@ -527,7 +527,7 @@ Recommendation: start with a small `act_metric` set for one zone, validate signa
 
 ---
 
-## Suppor
+## Support
 
 - Pro customers: reach out via your Codreum support channel (email / ticket portal as provided with your subscription).
 
@@ -810,7 +810,7 @@ Dashboards are most useful when the underlying count metrics exist. The table be
 | REFUSED by zone | `refused` | reads `ZoneRefused` |
 | Server errors (SERVFAIL) by zone | `server_error` | reads `ZoneServerError` |
 
-### Minimum to keep the core Landing SLIs non-empty:
+### Minimum to keep the core Landing SLIs non-empty
 
 `total`, `success`, `client_error`
 
@@ -829,7 +829,7 @@ Dashboards are most useful when the underlying count metrics exist. The table be
 | Non‑NXDOMAIN client error % by zone | `total` + `client_error` + `nxdomain` | `(ClientError − NXDOMAIN) / Total` |
 | “Client error by zone (Top‑N style)” | `client_error` | SEARCH over `ZoneClientError` |
 
-### Minimum to keep Investigations meaningfully populated:
+### Minimum to keep Investigations meaningfully populated
 
 `total`, `nxdomain`, `client_error`
 
@@ -843,7 +843,7 @@ Dashboards are most useful when the underlying count metrics exist. The table be
 | Global query type breakdown | `total` | reads `ZoneQtype*` (created under `total`) |
 | Global protocol breakdown (UDP vs TCP) | `total` + `proto_tcp` | UDP derived as `Total − TCP` |
 
-### Minimum for Deep Forensics to be non-empty:
+### Minimum for Deep Forensics to be non-empty
 
 `total`, `client_error`, `nxdomain`, `refused`, `server_error`, `proto_tcp`
 
@@ -851,12 +851,12 @@ Dashboards are most useful when the underlying count metrics exist. The table be
 
 ### Per-zone dashboards — minimums
 
-### Zone dashboard (per zone):
+### Zone dashboard (per zone)
 
 Minimum for a complete experience: `total`, `success`, `client_error`, `nxdomain`, `refused`, `server_error`, `proto_tcp`, `edns_failure`
 (Partial enablement is supported; only widgets whose inputs exist will show data.)
 
-### Zone Top‑N dashboard (per zone):
+### Zone Top‑N dashboard (per zone)
 
 No `act_metric` requirement. Depends on log availability and correct parsing.
 
@@ -1423,9 +1423,9 @@ Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 ### DNS Ops Landing (`opslanding`)
 
-### Intent:** fleet overview. Answers **“Is DNS healthy globally, and which zones are driving noise?”
+**Intent:** Fleet overview. Answers “Is DNS healthy globally, and which zones are driving noise?”
 
-### Widgets included:
+**Widgets included:**
 
 - **Header text widget** with navigation links to global and per-zone dashboards
 
@@ -1479,7 +1479,7 @@ Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 - **How-to-read text widget** (embedded on the dashboard)
 
-### Recommended minimum `act_metric` for a “full” Landing dashboard:
+### Recommended minimum `act_metric` for a “full” Landing dashboard
 
 `total`, `success`, `client_error`, `nxdomain`, `proto_tcp`, `edns_failure`, `refused`, `server_error`.
 
@@ -1487,9 +1487,9 @@ Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 ### DNS Ops Investigations (`investigation`)
 
-### Intent:** cross-zone triage. Answers **“What’s noisy/broken, and where should I drill in next?”
+**Intent:** Cross-zone triage. Answers “What’s noisy/broken, and where should I drill in next?”
 
-### Widgets included:
+**Widgets included:**
 
 - **Header text widget** with per-zone links and investigation checklis
 
@@ -1537,7 +1537,7 @@ Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 - **How-to-read text widget** (embedded on the dashboard)
 
-### Recommended minimum `act_metric` for a “full” Investigations dashboard:
+### Recommended minimum `act_metric` for a “full” Investigations dashboard
 
 `total`, `nxdomain`, `client_error`, `refused`, `server_error`, `edns_failure` (plus `success` and `proto_tcp` if you want consistency with Landing).
 
@@ -1549,7 +1549,7 @@ Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 **Intent:** heavier, longer-window global mix breakdowns for slow-burn debugging and post-incident analysis.
 
-### Widgets included:
+**Widgets included:**
 
 - **Header text widget** with navigation links and per-zone links
 
@@ -1575,7 +1575,7 @@ Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 - **How-to-read text widget** (embedded on the dashboard)
 
-### Recommended minimum `act_metric` for Deep Forensics:
+### Recommended minimum `act_metric` for Deep Forensics
 
 `total`, `client_error`, `nxdomain`, `refused`, `server_error`, `proto_tcp`.
 
