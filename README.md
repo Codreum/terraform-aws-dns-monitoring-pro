@@ -14,12 +14,14 @@
 
 <p align="center">
   <a href="https://www.codreum.com">Website</a> •
+  <a href="#pricing-and-support">Pricing &amp; Support</a> •
   <a href="#quickstart">Quickstart</a> •
   <a href="#configuration">Configuration</a> •
   <a href="#dashboards">Dashboards</a> •
   <a href="#templates">Templates</a> •
   <a href="#support">Support</a>
 </p>
+
 
 Production-grade DNS observability for **Route 53 hosted zone query logs** using **CloudWatch Logs → Metrics → Alarms → Dashboards → Contributor Insights**.
 
@@ -141,7 +143,7 @@ terraform init
 terraform apply
 ```
 
-Need help ? Contact: <https://www.codreum.com/contact.html>
+Need help? Contact: <https://www.codreum.com/contact.html>
 
 ---
 
@@ -165,6 +167,8 @@ Need help ? Contact: <https://www.codreum.com/contact.html>
 
 - [License](#license-important)
 
+- [Pricing and support](#pricing-and-support)
+
 - [Quickstart](#quickstart)
 
 - [Templates](#templates)
@@ -186,6 +190,138 @@ Need help ? Contact: <https://www.codreum.com/contact.html>
 This repo (docs + templates) is Apache-2.0.
 The **Pro module code** is distributed via the **Codreum private Terraform registry** under commercial terms.
 See: [LICENSE_SCOPE.md](LICENSE_SCOPE.md)
+
+---
+
+## Pricing and support
+
+Codreum is licensed **per Hosted Zone (or VPC)**. AWS usage is billed **separately by AWS**. Support is scoped to **licensed zones/VPCs** and the Codreum module.
+
+#### What you pay Codreum
+
+- **$79.99 USD per licensed Hosted Zone (or VPC) per month**
+- Billed **per AWS account** (licenses apply only to the zones/VPCs you specify)
+
+Purchase / manage:
+- [Plans & pricing](https://www.codreum.com/products.html)
+- [Licenses (login)](https://www.codreum.com/licenses.html)
+- [Documentation](https://www.codreum.com/docs.html)
+- [Knowledge Base](https://www.codreum.com/knowledge.html)
+- [Open a support case (ticket portal)](https://www.codreum.com/cases.html)
+- [Contact](https://www.codreum.com/contact.html)
+
+
+**Billing notes**
+
+- Pricing is shown in **USD**. Taxes (VAT/GST) may apply.
+- Your **checkout/invoice is the source of truth** (including currency conversion where applicable).
+- Licenses are scoped to the **AWS account** and the **ZoneId/VPC(s)** listed in your license.
+
+> A “licensed zone” means a Route 53 **Hosted Zone ID**. A “licensed VPC” means a **VPC ID** used as a monitoring subject.
+
+#### What you pay AWS (separately)
+
+This solution runs **entirely inside your AWS account** using CloudWatch Logs, Metrics, Alarms, Dashboards, and Contributor Insights.
+
+AWS charges depend on your environment and usage (for example: log ingestion/storage, Logs Insights query scanning, custom metrics, alarms, and Contributor Insights rules). Route 53 query logging publishes into CloudWatch Logs, and CloudWatch pricing applies.
+
+> Tip: Start with one zone + a small `act_metric` set to validate signal value and establish baseline CloudWatch spend, then scale out. Use a template that matches your rollout goal (dashboards-first, alerting-only, phased rollout, etc.).
+
+
+#### Included support (default)
+
+- **Email support (best-effort, fair use)** with a **72-hour first-response target (wall clock)**
+- Fair use covers: setup questions, configuration guidance, troubleshooting, and light tuning advice for licensed zones/VPCs
+- Best-effort support is provided as capacity allows; it is **not** intended for urgent incident coordination or guaranteed turnaround
+- If you need faster response times, Slack coordination, onboarding help, or recurring operational reviews, choose a paid support plan below
+- Scope: **licensed zones/VPCs only**
+- Self-serve docs + copy/paste Terraform templates included
+
+
+#### Support plans (optional)
+
+If you need faster response times, Slack coordination, onboarding help, or recurring operational reviews, choose an upgrade tier below (priced **per AWS account per month**, licensed zones/VPCs only):
+
+| Tier | Coverage | First response target | What’s included | Zoom allotment (scheduled) | Price (USD/mo) |
+|---|---|---:|---|---:|---:|
+| E1 | 5×8 | 48h | Email support | 1×30 min / month | 199 |
+| E2 | 7×8 | 48h | Email support | 1×30 min / month | 399 |
+| S1 | 5×16 | 24h | Email support + onboarding | 2×45 min / month | 799 |
+| S2 | 7×16 | 24h | Email support + onboarding + monthly review | 2×45 min / month | 1299 |
+| P1 | 5×16 | 18h | Priority handling + Slack + onboarding + 2 monthly reviews | 3×60 min / month | 1999 |
+| P2 | 7×16 | 12h | Priority handling + Slack + onboarding + 2 monthly reviews | **8 hours / month** | 2999 |
+| Enterprise | 7×24 | 6h | Priority handling + Slack + dedicated engineer | **12 hours / month** | 6999 |
+
+**Discounts**
+
+- Multi-account discount: **5% off per 3 AWS accounts**, capped at **20%** total
+- Annual billing: **additional 10% off**
+
+#### Plan selection guide
+
+- **E1 / E2** — Email-only support for setup questions and occasional tuning.
+- **S1 / S2** — Best for production rollouts: structured onboarding + recurring reviews to reduce alert noise and improve signal quality.
+- **P1 / P2** — Faster response + Slack coordination during incidents; higher-touch operational guidance.
+- **Enterprise** — 24/7 coverage, escalation paths, and a named technical owner.
+
+**What “onboarding” includes**
+
+- Validate deployment and permissions
+- Confirm log ingestion + dashboard visibility
+- Configure alert routing (SNS/email/Slack where applicable)
+- Initial signal tuning recommendations (thresholds, periods, noise controls)
+
+**What “monthly review” includes**
+
+- Review health signals and false-positive/false-negative patterns
+- Recommend tuning and rollout changes (per-zone / per-signal)
+- Cost review guidance (metrics/alarms/CI/Logs Insights usage)
+- Upgrade planning and change management guidance
+
+**Notes**
+
+- “First response” is **time to initial human response**, not time to resolution.
+- Zoom time is a **monthly allotment** (unused time does not roll over).
+- Zoom sessions are scheduled **during coverage hours** unless otherwise agreed.
+- “Priority handling” means your requests are triaged ahead of standard email support during coverage hours and aligned to severity.
+
+#### Support definitions (coverage, scope, and expectations)
+
+- **Coverage windows (5×8 / 7×8 / 5×16 / 7×16 / 7×24)** refer to the hours during which Codreum actively monitors and responds to support requests.
+  - **5×8** = business days, 8 hours/day
+  - **7×8** = 7 days/week, 8 hours/day
+  - **5×16** = business days, 16 hours/day
+  - **7×16** = 7 days/week, 16 hours/day
+  - **7×24** = 24/7 coverage
+- **Timezone:** coverage hours are defined in a mutually agreed timezone (default: **GMT+8**) and confirmed during onboarding.
+- **First response target** is the target time to a **human acknowledgement + initial triage** (clarifying questions, immediate mitigation steps, or a planned next action). It is **not** a guarantee of time-to-resolution.
+- **Response targets are measured during the plan’s coverage hours** (default: **GMT+8** unless otherwise agreed in writing).
+- **Scope:** support applies to **licensed zones/VPCs only** and focuses on module configuration/upgrades, interpreting dashboards/alarms, tuning signals, and troubleshooting common AWS/service constraints.
+- **Severity & triage (typical)**
+  - **P1:** production outage / widespread failure signals → prioritized immediately within coverage hours
+  - **P2:** degradation / elevated error rates / noisy alarms → prioritized after P1
+  - **P3:** how-to questions, feature guidance, planned changes → handled in normal queue
+- **Fair use:** “fair use” is designed for normal operational usage. If you need extended real-time collaboration or ongoing operational ownership, choose a higher tier (or Enterprise).
+- **Slack (where included):** Slack is for coordination and faster back-and-forth during coverage hours; complex investigations may still be tracked via email/ticket for completeness.
+- **Enterprise “dedicated engineer” (what it means):** a named technical owner for your account, regular touchpoints, and an escalation path during incidents. It does **not** mean Codreum operates your AWS account or manages your Route 53 records.
+- **Exclusions (typical):** Codreum does not operate your AWS account, manage Route 53 records, or provide general AWS support unrelated to this module. AWS service incidents remain governed by AWS.
+- **Best-effort support** does not include guaranteed response times outside the stated target and may be slower during peak demand.
+
+> If you need a specific timezone, holiday calendar, security questionnaire support, or contractual SLA language for procurement, contact Codreum to align terms before purchase.
+
+#### How to open a support request
+
+Open a case via **My Cases**: <https://www.codreum.com/cases.html>  
+(For known issues and how-to articles, see the Knowledge Base: <https://www.codreum.com/knowledge.html>)
+
+Include:
+- AWS account ID, region, and your `prefix`
+- affected ZoneId(s)/VPC(s) and log group ARN(s)
+- module version + Terraform version
+- CloudWatch alarm/dashboard names (or screenshots) and any recent changes
+- exact error output (copy/paste)
+
+We respond with an acknowledgement + initial triage + a recommended next action (and an ETA for the next update when applicable).
 
 ---
 
@@ -218,7 +354,7 @@ This module is delivered through the **Codreum private Terraform registry**. The
 
   - Access to the **Codreum registry** (`registry.codreum.com`) via Codreum CLI
 
-- Outbound HTTPS access from your Terraform runner (and from the license watcher Lambda if enabled) to reach Codreum’s license endpoin
+- Outbound HTTPS access from your Terraform runner (and from the license watcher Lambda if enabled) to reach Codreum’s license endpoint
 
 ---
 
@@ -566,15 +702,15 @@ These are emitted via CloudWatch Logs metric filters:
 
   - `ZoneTotal` — total query count (baseline volume)
 
-  - `ZoneNXDOMAIN` — NXDOMAIN query coun
+  - `ZoneNXDOMAIN` — NXDOMAIN query count
 
-  - `ZoneServerError` — SERVFAIL / server error query coun
+  - `ZoneServerError` — SERVFAIL / server error query count
 
-  - `ZoneRefused` — REFUSED query coun
+  - `ZoneRefused` — REFUSED query count
 
-  - `ZoneClientError` — any `rcode != NOERROR` query coun
+  - `ZoneClientError` — any `rcode != NOERROR` query count
 
-  - `ZoneSuccess` — `rcode == NOERROR` query coun
+  - `ZoneSuccess` — `rcode == NOERROR` query count
 
 - **Protocol & EDNS (counts)**
 
@@ -1152,7 +1288,7 @@ For rate/percent anomaly alarms, **m1 is an expression** (e.g., `100 * NXDOMAIN 
 
 ---
 
-### Notifications: “shadow mode” by defaul
+### Notifications: “shadow mode” by default
 
 Anomaly alarms are commonly enabled in **shadow mode** first:
 
@@ -1497,7 +1633,7 @@ Dashboard names are prefixed with your `prefix` and the product code (`dnsciz`).
 
 **Widgets included:**
 
-- **Header text widget** with per-zone links and investigation checklis
+- **Header text widget** with per-zone links and investigation checklist
 
 - **Fleet-wide hotspots** (time series, by zone)
 
