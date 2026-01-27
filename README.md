@@ -1,6 +1,12 @@
 # Codreum DNS Monitoring (Pro) — DNSCI-Z (Hosted Zone)
 
 <p align="center">
+  <a href="https://github.com/Codreum/terraform-aws-dns-monitoring-pro/actions/workflows/ci.yml">
+    <img src="https://github.com/Codreum/terraform-aws-dns-monitoring-pro/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI">
+  </a>
+</p>
+
+<p align="center">
   <a href="https://www.codreum.com">
     <img src="docs/brand/logo.png" alt="Codreum" width="200" />
   </a>
@@ -131,7 +137,7 @@ This repository contains **templates + docs only**. The **Pro module code** is d
 
 ```bash
 codreum connect --code CT-REPLACE-ME
-terraform ini
+terraform init
 terraform apply
 ```
 
@@ -308,7 +314,7 @@ module "dnsciz" {
 After authenticating to the registry (Step 3), run:
 
 ```bash
-terraform ini
+terraform init
 terraform plan
 terraform apply
 ```
@@ -424,7 +430,7 @@ Each template folder contains:
 
 ```bash
 cd templates/<chosen-template>
-terraform ini
+terraform init
 terraform plan
 terraform apply
 ```
