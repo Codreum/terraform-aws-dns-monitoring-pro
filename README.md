@@ -22,7 +22,6 @@
   <a href="#support">Support</a>
 </p>
 
-
 Production-grade DNS observability for **Route 53 hosted zone query logs** using **CloudWatch Logs → Metrics → Alarms → Dashboards → Contributor Insights**.
 
 This module is designed to answer the questions that matter during incidents:
@@ -197,12 +196,13 @@ See: [LICENSE_SCOPE.md](LICENSE_SCOPE.md)
 
 Codreum is licensed **per Hosted Zone (or VPC)**. AWS usage is billed **separately by AWS**. Support is scoped to **licensed zones/VPCs** and the Codreum module.
 
-#### What you pay Codreum
+### What you pay Codreum
 
 - **$79.99 USD per licensed Hosted Zone (or VPC) per month**
 - Billed **per AWS account** (licenses apply only to the zones/VPCs you specify)
 
 Purchase / manage:
+
 - [Plans & pricing](https://www.codreum.com/products.html)
 - [Licenses (login)](https://www.codreum.com/licenses.html)
 - [Documentation](https://www.codreum.com/docs.html)
@@ -210,8 +210,7 @@ Purchase / manage:
 - [Open a support case (ticket portal)](https://www.codreum.com/cases.html)
 - [Contact](https://www.codreum.com/contact.html)
 
-
-**Billing notes**
+#### Billing notes
 
 - Pricing is shown in **USD**. Taxes (VAT/GST) may apply.
 - Your **checkout/invoice is the source of truth** (including currency conversion where applicable).
@@ -219,7 +218,7 @@ Purchase / manage:
 
 > A “licensed zone” means a Route 53 **Hosted Zone ID**. A “licensed VPC” means a **VPC ID** used as a monitoring subject.
 
-#### What you pay AWS (separately)
+### What you pay AWS (separately)
 
 This solution runs **entirely inside your AWS account** using CloudWatch Logs, Metrics, Alarms, Dashboards, and Contributor Insights.
 
@@ -227,8 +226,7 @@ AWS charges depend on your environment and usage (for example: log ingestion/sto
 
 > Tip: Start with one zone + a small `act_metric` set to validate signal value and establish baseline CloudWatch spend, then scale out. Use a template that matches your rollout goal (dashboards-first, alerting-only, phased rollout, etc.).
 
-
-#### Included support (default)
+### Included support (default)
 
 - **Email support (best-effort, fair use)** with a **72-hour first-response target (wall clock)**
 - Fair use covers: setup questions, configuration guidance, troubleshooting, and light tuning advice for licensed zones/VPCs
@@ -237,8 +235,7 @@ AWS charges depend on your environment and usage (for example: log ingestion/sto
 - Scope: **licensed zones/VPCs only**
 - Self-serve docs + copy/paste Terraform templates included
 
-
-#### Support plans (optional)
+### Support plans (optional)
 
 If you need faster response times, Slack coordination, onboarding help, or recurring operational reviews, choose an upgrade tier below (priced **per AWS account per month**, licensed zones/VPCs only):
 
@@ -252,7 +249,7 @@ If you need faster response times, Slack coordination, onboarding help, or recur
 | P2 | 7×16 | 12h | Priority handling + Slack + onboarding + 2 monthly reviews | **8 hours / month** | 2999 |
 | Enterprise | 7×24 | 6h | Priority handling + Slack + dedicated engineer | **12 hours / month** | 6999 |
 
-**Discounts**
+#### Discounts
 
 - Multi-account discount: **5% off per 3 AWS accounts**, capped at **20%** total
 - Annual billing: **additional 10% off**
@@ -264,28 +261,28 @@ If you need faster response times, Slack coordination, onboarding help, or recur
 - **P1 / P2** — Faster response + Slack coordination during incidents; higher-touch operational guidance.
 - **Enterprise** — 24/7 coverage, escalation paths, and a named technical owner.
 
-**What “onboarding” includes**
+#### What “onboarding” includes
 
 - Validate deployment and permissions
 - Confirm log ingestion + dashboard visibility
 - Configure alert routing (SNS/email/Slack where applicable)
 - Initial signal tuning recommendations (thresholds, periods, noise controls)
 
-**What “monthly review” includes**
+#### What “monthly review” includes
 
 - Review health signals and false-positive/false-negative patterns
 - Recommend tuning and rollout changes (per-zone / per-signal)
 - Cost review guidance (metrics/alarms/CI/Logs Insights usage)
 - Upgrade planning and change management guidance
 
-**Notes**
+#### Notes
 
 - “First response” is **time to initial human response**, not time to resolution.
 - Zoom time is a **monthly allotment** (unused time does not roll over).
 - Zoom sessions are scheduled **during coverage hours** unless otherwise agreed.
 - “Priority handling” means your requests are triaged ahead of standard email support during coverage hours and aligned to severity.
 
-#### Support definitions (coverage, scope, and expectations)
+### Support definitions (coverage, scope, and expectations)
 
 - **Coverage windows (5×8 / 7×8 / 5×16 / 7×16 / 7×24)** refer to the hours during which Codreum actively monitors and responds to support requests.
   - **5×8** = business days, 8 hours/day
@@ -315,6 +312,7 @@ Open a case via **My Cases**: <https://www.codreum.com/cases.html>
 (For known issues and how-to articles, see the Knowledge Base: <https://www.codreum.com/knowledge.html>)
 
 Include:
+
 - AWS account ID, region, and your `prefix`
 - affected ZoneId(s)/VPC(s) and log group ARN(s)
 - module version + Terraform version
