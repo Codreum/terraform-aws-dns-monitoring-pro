@@ -83,48 +83,57 @@ This module is designed to answer the questions that matter during incidents:
 ---
 
 ## Screenshots
-
+ 
 Click any image to open it full-size.
-
+ 
 ### Dashboards
-
+ 
 #### DNS Ops — Landing (fleet health + SLO tiles)
+
 [![DNS Ops — Landing](screenshots/dashboard-ops-landing.jpg)](screenshots/dashboard-ops-landing.jpg)
-
+ 
 #### DNS Ops — Investigations (cross-zone hotspots + drill-down)
+
 [![DNS Ops — Investigations](screenshots/dashboard-investigations.jpg)](screenshots/dashboard-investigations.jpg)
-
+ 
 #### DNS Ops — Deep Forensics (global mix breakdowns)
+
 [![DNS Ops — Deep Forensics](screenshots/dashboard-forensic.jpg)](screenshots/dashboard-forensic.jpg)
-
+ 
 #### Per-zone dashboard (single-zone control panel)
+
 [![Per-zone dashboard](screenshots/dashboard-per-zone.jpg)](screenshots/dashboard-per-zone.jpg)
-
+ 
 #### Zone Top-N (Logs Insights drilldowns)
+
 [![Zone Top-N dashboard](screenshots/dashboard-topn.jpg)](screenshots/dashboard-topn.jpg)
-
+ 
 ---
-
+ 
 ### Alarms
-
+ 
 #### Alarm list (examples)
+
 [![CloudWatch alarms](screenshots/alarms.jpg)](screenshots/alarms.jpg)
-
+ 
 ---
-
+ 
 ### Contributor Insights
-
+ 
 #### Contributor Insights rules (enabled set)
+
 [![Contributor Insights rules](screenshots/ci-rules.jpg)](screenshots/ci-rules.jpg)
-
+ 
 #### Example Top-N view
+
 [![Contributor Insights Top-N](screenshots/ci-topn.jpg)](screenshots/ci-topn.jpg)
-
+ 
 ---
-
+ 
 ### Notifications
-
+ 
 #### Slack notification example (AWS Chatbot)
+
 [![Slack notification example](screenshots/slack-notification.png)](screenshots/slack-notification.png)
 
 ---
@@ -474,7 +483,7 @@ When posting in Slack, include:
 
 ---
 
-#### How to open a support request
+### How to open a support request
 
 Open a case via **My Cases**: <https://www.codreum.com/cases.html>  
 (For known issues and how-to articles, see the Knowledge Base: <https://www.codreum.com/knowledge.html>)
