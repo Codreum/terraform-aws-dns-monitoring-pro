@@ -37,7 +37,6 @@ This module is designed to answer the questions that matter during incidents:
 - **Who is driving it?** (Top-N by qname/qtype/edge/client)
 
 ✅ Multi-zone support (one deployment can cover many hosted zones)
-
 ✅ Opinionated dashboards:
 
 - **DNS Ops Landing** (fleet health + SLO tiles)
@@ -49,13 +48,9 @@ This module is designed to answer the questions that matter during incidents:
 - **Per-zone dashboards** + **per-zone Top‑N drilldowns**
 
 ✅ More DNS health signals
-
 ✅ Rich Contributor Insights pack (profiles + matrices)
-
 ✅ Metric alarms + optional anomaly detection
-
 ✅ Deployed into **your AWS account** with **Terraform**
-
 ✅ Complete setup in less than 5 minutes
 
 > This README is for the **Pro / paid** edition.
@@ -74,7 +69,7 @@ This module is designed to answer the questions that matter during incidents:
 | Per-zone Top-N dashboards (expanded) | ❌ | ✅ |
 | Built-in SNS wiring presets (Email / Slack / SMS) | ❌ | ✅ |
 | Log group management | ❌ | ✅ |
-| Multiple zone/VPC IDs in one deployment | ❌ | ✅ |
+| Multiple zone IDs in one deployment | ❌ | ✅ |
 | Advanced dashboards (Ops landing / Investigation / Forensics) | ❌ | ✅ |
 | Licensing & enforcement | ❌ | ✅ |
 | Support / SLA | ❌ | ✅ |
@@ -192,12 +187,19 @@ See: [LICENSE_SCOPE.md](LICENSE_SCOPE.md)
 
 ## Pricing and support
 
-Codreum is licensed **per Hosted Zone (or VPC)**. AWS usage is billed **separately by AWS**. Support is scoped to **licensed zones/VPCs** and the Codreum module.
-
 ### What you pay Codreum
 
-- **$79.99 USD per licensed Hosted Zone (or VPC) per month**
-- Billed **per AWS account** (licenses apply only to the zones/VPCs you specify)
+Codreum is licensed **per AWS account** (per-subject or unlimited zones). AWS usage is billed **separately by AWS**. Support is scoped to the Codreum module and **licensed subjects** (or the account, for unlimited).
+
+
+| Plan | Price | Applies to | Best for |
+|---|---:|---|---|
+| Per-zone | **$79.99 / Hosted Zone / month** | Only the ZoneId(s) you license (and deploy) in that AWS account | Small-to-mid deployments |
+| Unlimited Hosted Zones (per account) | **$799.99 / AWS account / month** | Unlimited Route 53 Hosted Zones in that single AWS account | 10+ zones, large fleets, fast growth |
+
+**Break-even:** per-zone pricing is ~$799.90 at 10 zones/month, so **unlimited is typically better at 11+ zones** (and simplifies procurement).
+
+Most teams recover the cost by avoiding even a single incident hour, or by not having to build and maintain custom metrics, alarms, dashboards, and Contributor Insights rules.
 
 Purchase / manage:
 
@@ -208,13 +210,16 @@ Purchase / manage:
 - [Open a support case (ticket portal)](https://www.codreum.com/cases.html)
 - [Contact](https://www.codreum.com/contact.html)
 
+
 #### Billing notes
 
 - Pricing is shown in **USD**. Taxes (VAT/GST) may apply.
 - Your **checkout/invoice is the source of truth** (including currency conversion where applicable).
-- Licenses are scoped to the **AWS account** and the **ZoneId/VPC(s)** listed in your license.
+- Licenses are scoped to the **AWS account** and either (a) the **ZoneId(s)** listed in your license (**per-subject**), or (b) the **AWS account** itself (**unlimited Hosted Zones**).
 
-> A “licensed zone” means a Route 53 **Hosted Zone ID**. A “licensed VPC” means a **VPC ID** used as a monitoring subject.
+> A “licensed zone” means a Route 53 **Hosted Zone ID**.
+> Unlimited pricing (when purchased) applies to **Hosted Zones only** in that AWS account.
+
 
 ### What you pay AWS (separately)
 
@@ -227,25 +232,25 @@ AWS charges depend on your environment and usage (for example: log ingestion/sto
 ### Included support (default)
 
 - **Email support (best-effort, fair use)** with a **72-hour first-response target (wall clock)**
-- Fair use covers: setup questions, configuration guidance, troubleshooting, and light tuning advice for licensed zones/VPCs
+- Fair use covers: setup questions, configuration guidance, troubleshooting, and light tuning advice for licensed zones
 - Best-effort support is provided as capacity allows; it is **not** intended for urgent incident coordination or guaranteed turnaround
 - If you need faster response times, Slack coordination, onboarding help, or recurring operational reviews, choose a paid support plan below
-- Scope: **licensed zones/VPCs only**
+- Scope: **licensed zones only**
 - Self-serve docs + copy/paste Terraform templates included
 
 ### Support plans (optional)
 
-If you need faster response times, Slack coordination, onboarding help, or recurring operational reviews, choose an upgrade tier below (priced **per AWS account per month**, licensed zones/VPCs only):
+If you need faster response times, Slack coordination, onboarding help, or recurring operational reviews, choose an upgrade tier below (priced **per AWS account per month**, licensed zones only):
 
 | Tier | Coverage | First response target | What’s included | Zoom allotment (scheduled) | Price (USD/mo) |
 |---|---|---:|---|---:|---:|
-| E1 | 5×8 | 48h | Email support | 1×30 min / month | 199 |
-| E2 | 7×8 | 48h | Email support | 1×30 min / month | 399 |
-| S1 | 5×16 | 24h | Email support + onboarding | 2×45 min / month | 799 |
-| S2 | 7×16 | 24h | Email support + onboarding + monthly review | 2×45 min / month | 1299 |
-| P1 | 5×16 | 18h | Priority handling + Slack + onboarding + 2 monthly reviews | 3×60 min / month | 1999 |
-| P2 | 7×16 | 12h | Priority handling + Slack + onboarding + 2 monthly reviews | **8 hours / month** | 2999 |
-| Enterprise | 7×24 | 6h | Priority handling + Slack + dedicated engineer | **12 hours / month** | 6999 |
+| Basic | 5×8 | 48h | Email support | 1×30 min / month | 199 |
+| Basic+ | 7×8 | 24h | Email support | 2×30 min / month | 399 |
+| Elite | 5×16 | 24h | Email support + onboarding | 2×45 min / month | 799 |
+| Elite+ | 7×16 | 24h | Email support + onboarding + monthly review | 3×45 min / month | 1299 |
+| Advance | 5×16 | 16h | Priority handling + Slack + onboarding + 2 monthly reviews | 4×60 min / month | 1999 |
+| Advance+ | 7×16 | 12h | Priority handling + Slack + onboarding + 2 monthly reviews | **8 hours / month** | 2999 |
+| Enterprise | 7×24 | 8h | Priority handling + Slack + dedicated engineer | **12 hours / month** | 6999 |
 
 #### Discounts
 
@@ -254,9 +259,9 @@ If you need faster response times, Slack coordination, onboarding help, or recur
 
 #### Plan selection guide
 
-- **E1 / E2** — Email-only support for setup questions and occasional tuning.
-- **S1 / S2** — Best for production rollouts: structured onboarding + recurring reviews to reduce alert noise and improve signal quality.
-- **P1 / P2** — Faster response + Slack coordination during incidents; higher-touch operational guidance.
+- **Basic / Basic+** — Email-only support for setup questions and occasional tuning.
+- **Elite/ Elite+** — Best for production rollouts: structured onboarding + recurring reviews to reduce alert noise and improve signal quality.
+- **Advance / Advance+** — Faster response + Slack coordination during incidents; higher-touch operational guidance.
 - **Enterprise** — 24/7 coverage, escalation paths, and a named technical owner.
 
 #### What “onboarding” includes
@@ -291,16 +296,19 @@ If you need faster response times, Slack coordination, onboarding help, or recur
 - **Timezone:** coverage hours are defined in a mutually agreed timezone (default: **GMT+8**) and confirmed during onboarding.
 - **First response target** is the target time to a **human acknowledgement + initial triage** (clarifying questions, immediate mitigation steps, or a planned next action). It is **not** a guarantee of time-to-resolution.
 - **Response targets are measured during the plan’s coverage hours** (default: **GMT+8** unless otherwise agreed in writing).
-- **Scope:** support applies to **licensed zones/VPCs only** and focuses on module configuration/upgrades, interpreting dashboards/alarms, tuning signals, and troubleshooting common AWS/service constraints.
+- **Scope:** support applies to **licensed zones only** and focuses on module configuration/upgrades, interpreting dashboards/alarms, tuning signals, and troubleshooting common AWS/service constraints.
 - **Severity & triage (typical)**
   - **P1:** production outage / widespread failure signals → prioritized immediately within coverage hours
   - **P2:** degradation / elevated error rates / noisy alarms → prioritized after P1
   - **P3:** how-to questions, feature guidance, planned changes → handled in normal queue
+- **Slack (Advance/Advance+/Enterprise):** Slack support is provided via a dedicated **Slack Connect** channel per customer account for coordination during coverage hours. For complex issues, RCA, or anything requiring follow-up, we’ll track the work in the ticket portal (Slack is not the system of record).
+- **Live triage (Advance/Advance+/Enterprise):** For active incidents, we may propose a Zoom/Huddle for real-time triage **during coverage hours**. Sessions count against your plan’s monthly Zoom allotment; outside allotment we’ll continue asynchronously via Slack/email/ticket.
 - **Fair use:** “fair use” is designed for normal operational usage. If you need extended real-time collaboration or ongoing operational ownership, choose a higher tier (or Enterprise).
-- **Slack (where included):** Slack is for coordination and faster back-and-forth during coverage hours; complex investigations may still be tracked via email/ticket for completeness.
 - **Enterprise “dedicated engineer” (what it means):** a named technical owner for your account, regular touchpoints, and an escalation path during incidents. It does **not** mean Codreum operates your AWS account or manages your Route 53 records.
 - **Exclusions (typical):** Codreum does not operate your AWS account, manage Route 53 records, or provide general AWS support unrelated to this module. AWS service incidents remain governed by AWS.
 - **Best-effort support** does not include guaranteed response times outside the stated target and may be slower during peak demand.
+- **Security:** Please do not share credentials, private keys, or secrets in Slack/email. Redact sensitive fields from logs before sharing.
+- **Slack support (human coordination) is separate from Slack alerting (AWS Chatbot).** Alerting is configured in your AWS account via SNS/Chatbot; support Slack is for coordinating with Codreum engineers.
 
 > If you need a specific timezone, holiday calendar, security questionnaire support, or contractual SLA language for procurement, contact Codreum to align terms before purchase.
 
@@ -312,7 +320,7 @@ Open a case via **My Cases**: <https://www.codreum.com/cases.html>
 Include:
 
 - AWS account ID, region, and your `prefix`
-- affected ZoneId(s)/VPC(s) and log group ARN(s)
+- affected ZoneId(s) and log group ARN(s)
 - module version + Terraform version
 - CloudWatch alarm/dashboard names (or screenshots) and any recent changes
 - exact error output (copy/paste)
