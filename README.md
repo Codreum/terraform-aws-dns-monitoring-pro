@@ -14,12 +14,12 @@
 
 <p align="center">
   <a href="https://www.codreum.com">Website</a> •
+  <a href="#why-use-codreum-dns-monitor">Why Codreum</a> •
   <a href="#pricing-and-support">Pricing &amp; Support</a> •
   <a href="#quickstart">Quickstart</a> •
-  <a href="#configuration">Configuration</a> •
-  <a href="#dashboards">Dashboards</a> •
   <a href="#templates">Templates</a> •
-  <a href="#support">Support</a>
+  <a href="#limitations">Limitations</a> •
+  <a href="#configuration-reference">Configuration Reference</a>
 </p>
 
 Production-grade DNS observability for **Route 53 hosted zone query logs** using **CloudWatch Logs → Metrics → Alarms → Dashboards → Contributor Insights**.
@@ -178,9 +178,7 @@ Need help? Contact: <https://www.codreum.com/contact.html>
 
 - [Limitations](#limitations)
 
-- [Support](#support)
-
-- [Reference](#reference)
+- [Configuration Reference](#configuration-reference)
 
 ---
 
@@ -667,23 +665,7 @@ Recommendation: start with a small `act_metric` set for one zone, validate signa
 
 ---
 
-## Support
-
-- Pro customers: reach out via your Codreum support channel (email / ticket portal as provided with your subscription).
-
-- If this repo is mirrored internally, file an issue with:
-
-  - your `prefix`
-
-  - affected ZoneId(s)
-
-  - which `act_metric` flags are enabled
-
-  - the CloudWatch alarm name(s) / dashboard name(s)
-
----
-
-## Reference
+## Configuration Reference
 
 <details>
 <summary><strong>What you get (Pro)</strong></summary>
