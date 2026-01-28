@@ -37,6 +37,7 @@ This module is designed to answer the questions that matter during incidents:
 - **Who is driving it?** (Top-N by qname/qtype/edge/client)
 
 ✅ Multi-zone support (one deployment can cover many hosted zones)
+
 ✅ Opinionated dashboards:
 
 - **DNS Ops Landing** (fleet health + SLO tiles)
@@ -48,9 +49,13 @@ This module is designed to answer the questions that matter during incidents:
 - **Per-zone dashboards** + **per-zone Top‑N drilldowns**
 
 ✅ More DNS health signals
+
 ✅ Rich Contributor Insights pack (profiles + matrices)
+
 ✅ Metric alarms + optional anomaly detection
+
 ✅ Deployed into **your AWS account** with **Terraform**
+
 ✅ Complete setup in less than 5 minutes
 
 > This README is for the **Pro / paid** edition.
