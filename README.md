@@ -15,6 +15,7 @@
 <p align="center">
   <a href="https://www.codreum.com">Website</a> •
   <a href="#why-use-codreum-dns-monitor">Why Codreum</a> •
+  <a href="#screenshots">Screenshots</a> •
   <a href="#pricing-and-support">Pricing &amp; Support</a> •
   <a href="#quickstart">Quickstart</a> •
   <a href="#templates">Templates</a> •
@@ -78,6 +79,53 @@ This module is designed to answer the questions that matter during incidents:
 | Advanced dashboards (Ops landing / Investigation / Forensics) | ❌ | ✅ |
 | Licensing & enforcement | ❌ | ✅ |
 | Support / SLA | ❌ | ✅ |
+
+---
+
+## Screenshots
+
+Click any image to open it full-size.
+
+### Dashboards
+
+#### DNS Ops — Landing (fleet health + SLO tiles)
+[![DNS Ops — Landing](screenshots/dashboard-ops-landing.jpg)](screenshots/dashboard-ops-landing.jpg)
+
+#### DNS Ops — Investigations (cross-zone hotspots + drill-down)
+[![DNS Ops — Investigations](screenshots/dashboard-investigations.jpg)](screenshots/dashboard-investigations.jpg)
+
+#### DNS Ops — Deep Forensics (global mix breakdowns)
+[![DNS Ops — Deep Forensics](screenshots/dashboard-forensic.jpg)](screenshots/dashboard-forensic.jpg)
+
+#### Per-zone dashboard (single-zone control panel)
+[![Per-zone dashboard](screenshots/dashboard-per-zone.jpg)](screenshots/dashboard-per-zone.jpg)
+
+#### Zone Top-N (Logs Insights drilldowns)
+[![Zone Top-N dashboard](screenshots/dashboard-topn.jpg)](screenshots/dashboard-topn.jpg)
+
+---
+
+### Alarms
+
+#### Alarm list (examples)
+[![CloudWatch alarms](screenshots/alarms.jpg)](screenshots/alarms.jpg)
+
+---
+
+### Contributor Insights
+
+#### Contributor Insights rules (enabled set)
+[![Contributor Insights rules](screenshots/ci-rules.jpg)](screenshots/ci-rules.jpg)
+
+#### Example Top-N view
+[![Contributor Insights Top-N](screenshots/ci-topn.jpg)](screenshots/ci-topn.jpg)
+
+---
+
+### Notifications
+
+#### Slack notification example (AWS Chatbot)
+[![Slack notification example](screenshots/slack-notification.png)](screenshots/slack-notification.png)
 
 ---
 
@@ -166,6 +214,8 @@ Need help? Contact: <https://www.codreum.com/contact.html>
 
 - [License](#license-important)
 
+- [Screenshots](#screenshots)
+
 - [Pricing and support](#pricing-and-support)
 
 - [Quickstart](#quickstart)
@@ -196,7 +246,6 @@ See: [LICENSE_SCOPE.md](LICENSE_SCOPE.md)
 
 Codreum is licensed **per AWS account** (per-subject or unlimited zones). AWS usage is billed **separately by AWS**. Support is scoped to the Codreum module and **licensed subjects** (or the account, for unlimited).
 
-
 | Plan | Price | Applies to | Best for |
 |---|---:|---|---|
 | Per-zone | **$79.99 / Hosted Zone / month** | Only the ZoneId(s) you license (and deploy) in that AWS account | Small-to-mid deployments |
@@ -215,16 +264,16 @@ Purchase / manage:
 - [Open a support case (ticket portal)](https://www.codreum.com/cases.html)
 - [Contact](https://www.codreum.com/contact.html)
 
-
 #### Billing notes
 
 - Pricing is shown in **USD**. Taxes (VAT/GST) may apply.
 - Your **checkout/invoice is the source of truth** (including currency conversion where applicable).
 - Licenses are scoped to the **AWS account** and either (a) the **ZoneId(s)** listed in your license (**per-subject**), or (b) the **AWS account** itself (**unlimited Hosted Zones**).
 
-> A “licensed zone” means a Route 53 **Hosted Zone ID**.
+> A “licensed zone” means a Route 53 **Hosted Zone ID**.  
 > Unlimited pricing (when purchased) applies to **Hosted Zones only** in that AWS account.
 
+---
 
 ### What you pay AWS (separately)
 
@@ -234,18 +283,22 @@ AWS charges depend on your environment and usage (for example: log ingestion/sto
 
 > Tip: Start with one zone + a small `act_metric` set to validate signal value and establish baseline CloudWatch spend, then scale out. Use a template that matches your rollout goal (dashboards-first, alerting-only, phased rollout, etc.).
 
+---
+
 ### Included support (default)
 
 - **Email support (best-effort, fair use)** with a **72-hour first-response target (wall clock)**
-- Fair use covers: setup questions, configuration guidance, troubleshooting, and light tuning advice for licensed zones
+- Fair use covers: setup questions, configuration guidance, troubleshooting, and light tuning advice for licensed zones/VPCs
 - Best-effort support is provided as capacity allows; it is **not** intended for urgent incident coordination or guaranteed turnaround
 - If you need faster response times, Slack coordination, onboarding help, or recurring operational reviews, choose a paid support plan below
-- Scope: **licensed zones only**
+- Scope: **licensed zones/VPCs only**
 - Self-serve docs + copy/paste Terraform templates included
+
+---
 
 ### Support plans (optional)
 
-If you need faster response times, Slack coordination, onboarding help, or recurring operational reviews, choose an upgrade tier below (priced **per AWS account per month**, licensed zones only):
+If you need faster response times, Slack coordination, onboarding help, or recurring operational reviews, choose an upgrade tier below (priced **per AWS account per month**, licensed zones/VPCs only):
 
 | Tier | Coverage | First response target | What’s included | Zoom allotment (scheduled) | Price (USD/mo) |
 |---|---|---:|---|---:|---:|
@@ -265,7 +318,7 @@ If you need faster response times, Slack coordination, onboarding help, or recur
 #### Plan selection guide
 
 - **Basic / Basic+** — Email-only support for setup questions and occasional tuning.
-- **Elite/ Elite+** — Best for production rollouts: structured onboarding + recurring reviews to reduce alert noise and improve signal quality.
+- **Elite / Elite+** — Best for production rollouts: structured onboarding + recurring reviews to reduce alert noise and improve signal quality.
 - **Advance / Advance+** — Faster response + Slack coordination during incidents; higher-touch operational guidance.
 - **Enterprise** — 24/7 coverage, escalation paths, and a named technical owner.
 
@@ -290,7 +343,110 @@ If you need faster response times, Slack coordination, onboarding help, or recur
 - Zoom sessions are scheduled **during coverage hours** unless otherwise agreed.
 - “Priority handling” means your requests are triaged ahead of standard email support during coverage hours and aligned to severity.
 
-### Support definitions (coverage, scope, and expectations)
+---
+
+## Support scope, supported configuration, and exclusions
+
+This section defines what Codreum support covers so expectations are clear and response is fast.
+
+### What’s covered
+
+Support focuses on Codreum DNS Monitoring (DNSCI-Z) for **licensed zones/VPCs** (or the account for unlimited), including:
+
+- Installation and upgrades (Terraform + Codreum registry/CLI authentication)
+- Module configuration guidance (inputs, templates, rollout patterns)
+- Troubleshooting deployment failures and AWS permission constraints related to the module
+- Interpreting dashboards/alarms/Contributor Insights results during triage
+- Tuning recommendations (thresholds, evaluation windows, `treat_missing_data`, anomaly sensitivity)
+- Verifying log ingestion and field parsing expectations (Route 53 query logging → CloudWatch Logs)
+- License validation and license watcher behavior
+
+### Supported configuration (required for full support)
+
+Support assumes the module is used in a **supported state**:
+
+- Using an official Codreum-released module version
+- Deployed via Terraform using documented inputs/overrides
+- No modifications to Codreum module internals (module implementation delivered via private registry)
+
+### What’s not covered (typical)
+
+The following are outside standard support scope:
+
+- Forks, patches, or modifications to the module implementation (e.g., changing internal code logic/structure)
+- Supporting customer-written custom forks/modules derived from Codreum code
+- Debugging environments where Codreum-managed resources were manually edited in AWS in a way that causes persistent Terraform drift
+- General AWS consulting outside the module (Route 53 record design, resolver selection/behavior, VPC/network architecture, application debugging)
+- Building bespoke dashboards/queries beyond the shipped templates (unless explicitly included in your plan or a services engagement)
+
+### Best-effort help to return to supported state
+
+If you’re in an unsupported state, we may provide best-effort guidance to help you **return to a supported configuration** (e.g., revert custom changes, upgrade to an official release, restore Terraform-managed resources). If deeper customization is required, we can scope a services engagement.
+
+---
+
+## Slack support (Advance / Advance+ / Enterprise) — how it works
+
+Slack support is for **human coordination**. It is separate from Slack alert delivery (AWS Chatbot).
+
+### Slack Connect channel setup
+
+- Codreum provides a dedicated **Slack Connect** channel per customer account (one channel per AWS account/license).
+- The customer assigns a small set of authorized users (recommended: on-call + platform owner).
+- The channel is used for triage coordination and quick questions **during coverage hours** (except Enterprise 7×24).
+
+### What Slack is best for
+
+- Incident coordination (rapid back-and-forth triage)
+- Fast clarification (what a signal means, where to drill next)
+- Quick configuration guidance (routing, overrides, rollout steps)
+- Coordinating scheduled Zoom/Huddle sessions (when needed)
+
+### What Slack is not (system of record)
+
+- Slack is not the system of record for long-running issues, RCAs, or change tracking.
+- For complex issues or anything requiring follow-up, Codreum will open/attach a case in the ticket portal. Slack remains the coordination layer.
+
+### Coverage and response targets
+
+- Coverage windows are per tier (5×16 / 7×16 / 7×24).
+- “First response” targets apply **during coverage hours**.
+- Outside coverage hours, messages are handled when coverage resumes (unless Enterprise 7×24).
+
+### Advance (5×16) — Slack + higher-touch guidance
+
+- Slack available during **5×16** coverage hours.
+- Priority handling in queue during coverage hours.
+- Live triage via Zoom/Huddle may be offered during coverage hours for active incidents (counts against Zoom allotment).
+
+### Advance+ (7×16) — Slack + extended coverage
+
+- Slack available during **7×16** coverage hours.
+- Faster first response target than Advance.
+- Live triage via Zoom/Huddle during coverage hours for active incidents (counts against Zoom allotment).
+
+### Enterprise (7×24) — 24/7 Slack + dedicated engineer
+
+- Slack available **24/7** with defined escalation paths.
+- A named/dedicated engineer provides continuity for your account, leads touchpoints, and coordinates incident support.
+- “Dedicated engineer” does not mean Codreum operates your AWS account or manages Route 53 records.
+
+### Recommended Slack request template (copy/paste)
+
+When posting in Slack, include:
+
+- **Severity:** P1 / P2 / P3
+- **AWS account:** `<account-id>`  **Region:** `<region>`  **Prefix:** `<prefix>`
+- **Affected ZoneId(s)/VPC(s):** `<ZoneId list>`
+- **Log group ARN(s):** `<arn...>`
+- **Module version:** `<x.y.z>`  **Terraform version:** `<x.y.z>`
+- **What changed recently:** `<deploy/config/traffic/provider event>`
+- **Symptoms:** `<alarm names + screenshots/links + timeframe (UTC)>`
+- **Goal:** `<what you want: stop paging / confirm root cause / tuning guidance>`
+
+---
+
+## Support definitions (coverage, scope, and expectations)
 
 - **Coverage windows (5×8 / 7×8 / 5×16 / 7×16 / 7×24)** refer to the hours during which Codreum actively monitors and responds to support requests.
   - **5×8** = business days, 8 hours/day
@@ -301,7 +457,7 @@ If you need faster response times, Slack coordination, onboarding help, or recur
 - **Timezone:** coverage hours are defined in a mutually agreed timezone (default: **GMT+8**) and confirmed during onboarding.
 - **First response target** is the target time to a **human acknowledgement + initial triage** (clarifying questions, immediate mitigation steps, or a planned next action). It is **not** a guarantee of time-to-resolution.
 - **Response targets are measured during the plan’s coverage hours** (default: **GMT+8** unless otherwise agreed in writing).
-- **Scope:** support applies to **licensed zones only** and focuses on module configuration/upgrades, interpreting dashboards/alarms, tuning signals, and troubleshooting common AWS/service constraints.
+- **Scope:** support applies to **licensed zones/VPCs only** and focuses on module configuration/upgrades, interpreting dashboards/alarms, tuning signals, and troubleshooting common AWS/service constraints.
 - **Severity & triage (typical)**
   - **P1:** production outage / widespread failure signals → prioritized immediately within coverage hours
   - **P2:** degradation / elevated error rates / noisy alarms → prioritized after P1
@@ -309,13 +465,14 @@ If you need faster response times, Slack coordination, onboarding help, or recur
 - **Slack (Advance/Advance+/Enterprise):** Slack support is provided via a dedicated **Slack Connect** channel per customer account for coordination during coverage hours. For complex issues, RCA, or anything requiring follow-up, we’ll track the work in the ticket portal (Slack is not the system of record).
 - **Live triage (Advance/Advance+/Enterprise):** For active incidents, we may propose a Zoom/Huddle for real-time triage **during coverage hours**. Sessions count against your plan’s monthly Zoom allotment; outside allotment we’ll continue asynchronously via Slack/email/ticket.
 - **Fair use:** “fair use” is designed for normal operational usage. If you need extended real-time collaboration or ongoing operational ownership, choose a higher tier (or Enterprise).
-- **Enterprise “dedicated engineer” (what it means):** a named technical owner for your account, regular touchpoints, and an escalation path during incidents. It does **not** mean Codreum operates your AWS account or manages your Route 53 records.
+- **Enterprise “dedicated engineer” (what it means):** a named technical owner for your account, regular touchpoints, and an escalation path during incidents. It does **not** mean Codreum operates your AWS account or manages your Route 53 hosted zones or records.
 - **Exclusions (typical):** Codreum does not operate your AWS account, manage Route 53 records, or provide general AWS support unrelated to this module. AWS service incidents remain governed by AWS.
-- **Best-effort support** does not include guaranteed response times outside the stated target and may be slower during peak demand.
 - **Security:** Please do not share credentials, private keys, or secrets in Slack/email. Redact sensitive fields from logs before sharing.
 - **Slack support (human coordination) is separate from Slack alerting (AWS Chatbot).** Alerting is configured in your AWS account via SNS/Chatbot; support Slack is for coordinating with Codreum engineers.
 
 > If you need a specific timezone, holiday calendar, security questionnaire support, or contractual SLA language for procurement, contact Codreum to align terms before purchase.
+
+---
 
 #### How to open a support request
 
@@ -325,7 +482,7 @@ Open a case via **My Cases**: <https://www.codreum.com/cases.html>
 Include:
 
 - AWS account ID, region, and your `prefix`
-- affected ZoneId(s) and log group ARN(s)
+- affected ZoneId(s)/VPC(s) and log group ARN(s)
 - module version + Terraform version
 - CloudWatch alarm/dashboard names (or screenshots) and any recent changes
 - exact error output (copy/paste)
