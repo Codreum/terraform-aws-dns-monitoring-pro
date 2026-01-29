@@ -2,17 +2,17 @@
 
 
 
-\*\*Heads up:\*\* This repository is \*\*pub:contentReference\[oaicite:10]{index=10}accept PRs from non-Codreum contributors\*\* (external PRs will be closed).
+\*\*Heads up:\*\* This repository is \*\*public read-only\*\*. We \*\*do not accept PRs from non-Codreum contributors\*\* (external PRs will be closed).
 
 
 
-If you want to report an issue:
+If you want to report something:
 
 \- Docs typo / broken link / bug: open an Issue.
 
 \- Security issue: follow SECURITY.md.
 
-\- License/subscription/module access: use the support channel in the README (“Pricing and Support”).
+\- License/subscription/module access: see README “Pricing and Support”.
 
 
 
