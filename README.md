@@ -7,6 +7,26 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/Codreum/terraform-aws-dns-monitoring-pro/actions/workflows/ci.yml">
+    <img src="https://github.com/Codreum/terraform-aws-dns-monitoring-pro/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI">
+  </a>
+
+  <a href="https://scorecard.dev/viewer/?uri=github.com/Codreum/terraform-aws-dns-monitoring-pro">
+    <img src="https://api.scorecard.dev/projects/github.com/Codreum/terraform-aws-dns-monitoring-pro/badge" alt="OpenSSF Scorecard">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Codreum/terraform-aws-dns-monitoring-pro/releases">
+    <img src="https://img.shields.io/github/v/release/Codreum/terraform-aws-dns-monitoring-pro" alt="Release">
+  </a>
+
+  <a href="https://github.com/Codreum/terraform-aws-dns-monitoring-pro/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/Codreum/terraform-aws-dns-monitoring-pro" alt="License">
+  </a>
+</p>
+
+<p align="center">
   <a href="https://www.codreum.com">
     <img src="docs/brand/logo.png" alt="Codreum" width="200" />
   </a>
