@@ -1,0 +1,24 @@
+name: Docs issue (typo / broken link)
+description: Report a documentation problem in README/docs/templates docs.
+title: "Docs: "
+labels: ["docs"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! This repo is templates + docs for a paid module. Please do not post secrets.
+  - type: input
+    id: location
+    attributes:
+      label: Where is the issue?
+      description: Link to the file/section
+      placeholder: https://github.com/Codreum/terraform-aws-dns-monitoring-pro/...
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What’s wrong?
+      description: Describe the problem and what you expected.
+    validations:
+      required: true

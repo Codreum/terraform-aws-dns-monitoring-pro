@@ -1,0 +1,35 @@
+name: close external PRs
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  close:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close non-member PRs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const assoc = context.payload.pull_request.author_association;
+            const allowed = new Set(["MEMBER","OWNER","COLLABORATOR"]);
+            if (allowed.has(assoc)) return;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `Thanks for the PR! This repository is **public read-only**; external PRs are not accepted and will be closed.\n\nPlease open an issue instead (docs/bug), or use the support channel in SECURITY.md if you're a customer.`
+            });
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              state: "closed"
+            });

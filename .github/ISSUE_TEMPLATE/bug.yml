@@ -1,0 +1,29 @@
+name: Bug report
+description: Report a suspected bug in templates / docs behavior.
+title: "Bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Public read-only repo**: PRs from outside Codreum aren't accepted.
+        Please share sanitized details only (no license keys, no AWS secrets).
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps / which template path / Terraform version
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true

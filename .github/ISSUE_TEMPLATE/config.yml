@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Customer support
+    url: https://www.codreum.com/support
+    about: Use this for subscription/license/module access questions.
+  - name: Security issues
+    url: https://github.com/Codreum/terraform-aws-dns-monitoring-pro/security/policy
+    about: Please report vulnerabilities via the SECURITY policy.
