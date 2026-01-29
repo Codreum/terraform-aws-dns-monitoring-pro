@@ -4,12 +4,6 @@
   <a href="https://github.com/Codreum/terraform-aws-dns-monitoring-pro/actions/workflows/ci.yml">
     <img src="https://github.com/Codreum/terraform-aws-dns-monitoring-pro/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI">
   </a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/Codreum/terraform-aws-dns-monitoring-pro/actions/workflows/ci.yml">
-    <img src="https://github.com/Codreum/terraform-aws-dns-monitoring-pro/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI">
-  </a>
 
   <a href="https://scorecard.dev/viewer/?uri=github.com/Codreum/terraform-aws-dns-monitoring-pro">
     <img src="https://api.scorecard.dev/projects/github.com/Codreum/terraform-aws-dns-monitoring-pro/badge" alt="OpenSSF Scorecard">
