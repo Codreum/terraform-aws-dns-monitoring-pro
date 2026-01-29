@@ -5,6 +5,7 @@ on:
     branches: ["main"]
   schedule:
     - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
 
 permissions: read-all
 
@@ -18,7 +19,7 @@ jobs:
 
     steps:
       - name: Run Scorecard
-        uses: ossf/scorecard-action@v2
+        uses: ossf/scorecard-action@v2.4.1
         with:
           results_file: results.sarif
           results_format: sarif

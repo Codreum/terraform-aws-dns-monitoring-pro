@@ -1,22 +1,18 @@
-\## Thanks for the PR 👋
+\# Thanks for the PR 👋
 
 
 
-\*\*Heads up:\*\* This repository is \*\*public read-only\*\*. We \*\*do not accept PRs from non-Codreum contributors\*\* (external PRs will be closed).
+\*\*Heads up:\*\* This repository is \*\*pub:contentReference\[oaicite:10]{index=10}accept PRs from non-Codreum contributors\*\* (external PRs will be closed).
 
 
 
-If you found an security issue:
+If you want to report an issue:
 
-\- Open an Issue instead (docs typo / broken link / bug report), or
+\- Docs typo / broken link / bug: open an Issue.
 
-\- If you’re a customer, use the support channel listed in SECURITY.md.
+\- Security issue: follow SECURITY.md.
 
-
-
-If you have technical issue using the module, please refer to the instruction in Readme.md , "pricing and support" section.
-
-
+\- License/subscription/module access: use the support channel in the README (“Pricing and Support”).
 
 
 
@@ -24,15 +20,15 @@ If you have technical issue using the module, please refer to the instruction in
 
 
 
-\### What did you try to change?
+\## What did you try to change?
 
-(leave notes here)
+<!-- leave notes here -->
 
 
 
-\### Why?
+\## Why?
 
-(leave notes here)
+<!-- leave notes here -->
 
 
 
