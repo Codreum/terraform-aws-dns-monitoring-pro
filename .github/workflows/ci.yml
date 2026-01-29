@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
-          terraform_version: "1.14.6"
+          terraform_version: ">= 1.14.0"
       - name: terraform fmt check
         run: |
           terraform fmt -check -recursive templates
