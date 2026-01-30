@@ -3,7 +3,7 @@ name: close external PRs
 on:
   pull_request_target:
     types: [opened, reopened]
-workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
   pull-requests: write
@@ -14,24 +14,39 @@ jobs:
     if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
     steps:
-      - name: Close non-member PRs
-        uses: actions/github-script@v7
+      - name: Close non-member PRs (allowlisted bots)
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b
         with:
           script: |
-            const assoc = context.payload.pull_request.author_association;
-            const allowed = new Set(["MEMBER","OWNER","COLLABORATOR"]);
-            if (allowed.has(assoc)) return;
+            const pr = context.payload.pull_request;
+            const assoc = pr.author_association;
+            const login = pr.user?.login || "";
+
+            // Allow org members/collaborators + *your* automation bots
+            const allowedAssoc = new Set(["MEMBER","OWNER","COLLABORATOR"]);
+            const allowedLogins = new Set(["dependabot[bot]","renovate[bot]"]);
+
+            if (allowedAssoc.has(assoc) || allowedLogins.has(login)) return;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body: `Thanks for the PR! This repository is **public read-only**; external PRs are not accepted and will be closed.\n\nPlease open an issue instead (docs/bug), or use the support channel in SECURITY.md if you're a customer.`
+              issue_number: pr.number,
+              body: [
+                "Thanks for the PR! 👋",
+                "",
+                "**Important:** This repository is **public read-only**. PRs from non-Codreum accounts are not accepted and will be closed automatically.",
+                "",
+                "Please use:",
+                "- Issues (docs/bug reports), or",
+                "- SECURITY.md for security reports, or",
+                "- README → Pricing/Support for subscription & module access."
+              ].join("\n")
             });
 
             await github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
+              pull_number: pr.number,
               state: "closed"
             });

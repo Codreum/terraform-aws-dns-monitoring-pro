@@ -7,7 +7,7 @@ on:
     - cron: "0 6 * * 1" # Mondays 06:00 UTC
   workflow_dispatch:
 
-permissions: read-all
+permissions: read
 
 jobs:
   analysis:
@@ -19,13 +19,13 @@ jobs:
 
     steps:
       - name: Run Scorecard
-        uses: ossf/scorecard-action@v2.4.1
+        uses: ossf/scorecard-action@f49aabe0b5af0936a0987cfb85d86b75731b0186
         with:
           results_file: results.sarif
           results_format: sarif
           publish_results: true
 
       - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@2b983b380ce715a6c836c917154509c332c19b3a
         with:
           sarif_file: results.sarif

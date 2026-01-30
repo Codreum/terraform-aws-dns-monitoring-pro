@@ -1,0 +1,40 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write # for keyless signing
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Build artifact bundle
+        run: |
+          tar -czf templates-${{ github.ref_name }}.tar.gz templates docs README.md LICENSE SECURITY.md
+          sha256sum templates-${{ github.ref_name }}.tar.gz > templates-${{ github.ref_name }}.tar.gz.sha256
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@2b983b380ce715a6c836c917154509c332c19b3a
+        with:
+          cosign-release: "v2.2.3"
+
+      - name: Sign artifact (keyless) -> .sigstore bundle
+        run: |
+          cosign sign-blob --yes \
+            --bundle templates-${{ github.ref_name }}.tar.gz.sigstore \
+            templates-${{ github.ref_name }}.tar.gz
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b
+        with:
+          files: |
+            templates-${{ github.ref_name }}.tar.gz
+            templates-${{ github.ref_name }}.tar.gz.sha256
+            templates-${{ github.ref_name }}.tar.gz.sigstore
