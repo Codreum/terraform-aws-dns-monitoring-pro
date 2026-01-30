@@ -1,0 +1,22 @@
+name: codeql
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 7 * * 1" # weekly
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: github/codeql-action/init@2b983b380ce715a6c836c917154509c332c19b3a
+        with:
+          languages: python
+      - uses: github/codeql-action/analyze@2b983b380ce715a6c836c917154509c332c19b3a
