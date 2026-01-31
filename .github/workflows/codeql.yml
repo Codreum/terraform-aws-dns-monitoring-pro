@@ -7,13 +7,18 @@ on:
   schedule:
     - cron: "0 7 * * 1" # weekly
 
-permissions:
-  contents: read
-  security-events: write
+# Read-only by default at workflow level
+permissions: read-all
 
 jobs:
   analyze:
     runs-on: ubuntu-latest
+
+    # Only this job needs to write SARIF/security events
+    permissions:
+      security-events: write
+      contents: read
+
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: github/codeql-action/init@2b983b380ce715a6c836c917154509c332c19b3a
