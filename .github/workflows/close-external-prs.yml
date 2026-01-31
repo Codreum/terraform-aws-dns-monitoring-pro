@@ -1,47 +1,56 @@
-name: close external PRs
+name: Close external PRs
 
 on:
   pull_request_target:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize, ready_for_review]
   workflow_dispatch:
 
-permissions:
-  pull-requests: write
-  issues: write
+permissions: read-all
 
 jobs:
   close:
-    if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      contents: read
+
     steps:
-      - name: Close non-member PRs (allowlisted bots)
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b
+      - name: Close fork PRs (allowlisted bots)
+        uses: actions/github-script@v7
         with:
           script: |
             const pr = context.payload.pull_request;
-            const assoc = pr.author_association;
-            const login = pr.user?.login || "";
 
-            // Allow org members/collaborators + *your* automation bots
-            const allowedAssoc = new Set(["MEMBER","OWNER","COLLABORATOR"]);
-            const allowedLogins = new Set(["dependabot[bot]","renovate[bot]"]);
+            // 1) Never close INTERNAL PRs (same repo). Only collaborators can create these.
+            if (pr.head.repo.full_name === pr.base.repo.full_name) {
+              core.info(`Internal PR from same repo (${pr.head.repo.full_name}). Skip.`);
+              return;
+            }
 
-            if (allowedAssoc.has(assoc) || allowedLogins.has(login)) return;
+            // 2) Allowlisted bots (optional)
+            const allowBots = new Set([
+              "dependabot[bot]",
+              "renovate[bot]",
+              "github-actions[bot]"
+            ]);
+            if (allowBots.has(pr.user.login)) {
+              core.info(`Allowlisted bot PR (${pr.user.login}). Skip.`);
+              return;
+            }
+
+            // 3) Close external PRs (forks)
+            const msg =
+              "Thanks for the contribution. This repository is **read-only public**.\n\n" +
+              "- Public PRs are not accepted and will be closed automatically.\n" +
+              "- Codreum members: please open a branch in this repo and submit a PR from that branch.\n\n" +
+              "If you need subscription/license access, use the support link in the issue forms.";
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: pr.number,
-              body: [
-                "Thanks for the PR! 👋",
-                "",
-                "**Important:** This repository is **public read-only**. PRs from non-Codreum accounts are not accepted and will be closed automatically.",
-                "",
-                "Please use:",
-                "- Issues (docs/bug reports), or",
-                "- SECURITY.md for security reports, or",
-                "- README → Pricing/Support for subscription & module access."
-              ].join("\n")
+              body: msg
             });
 
             await github.rest.pulls.update({
