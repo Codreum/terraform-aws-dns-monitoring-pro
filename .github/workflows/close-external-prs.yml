@@ -5,43 +5,46 @@ on:
     types: [opened, reopened]
   workflow_dispatch:
 
-permissions:
-  pull-requests: write
-  issues: write
+permissions: read-all
 
 jobs:
   close:
-    if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
     steps:
-      - name: Close non-member PRs (allowlisted bots)
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b
+      - name: Close non-member PRs
+        uses: actions/github-script@v7
         with:
           script: |
             const pr = context.payload.pull_request;
-            const assoc = pr.author_association;
-            const login = pr.user?.login || "";
 
-            // Allow org members/collaborators + *your* automation bots
-            const allowedAssoc = new Set(["MEMBER","OWNER","COLLABORATOR"]);
-            const allowedLogins = new Set(["dependabot[bot]","renovate[bot]"]);
+            const author = pr.user.login;
+            const assoc  = pr.author_association;
+            const headRepo = pr.head.repo.full_name;
+            const baseRepo = pr.base.repo.full_name;
+            const isFork = headRepo !== baseRepo;
 
-            if (allowedAssoc.has(assoc) || allowedLogins.has(login)) return;
+            // Allow trusted bots if you want
+            const allowUsers = new Set([
+              "dependabot[bot]",
+              "renovate[bot]"
+            ]);
+
+            const allowAssoc = new Set(["MEMBER", "OWNER", "COLLABORATOR"]);
+
+            // Allow any PR from branches inside the same repo
+            if (!isFork) return;
+
+            // Allow org members/collaborators even if they use forks
+            if (allowUsers.has(author) || allowAssoc.has(assoc)) return;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: pr.number,
-              body: [
-                "Thanks for the PR! 👋",
-                "",
-                "**Important:** This repository is **public read-only**. PRs from non-Codreum accounts are not accepted and will be closed automatically.",
-                "",
-                "Please use:",
-                "- Issues (docs/bug reports), or",
-                "- SECURITY.md for security reports, or",
-                "- README → Pricing/Support for subscription & module access."
-              ].join("\n")
+              body: `Thanks for the PR! This repository is **public read-only**; external PRs are not accepted and will be closed.\n\nPlease open an issue instead (docs/bug), or use the support channel in SECURITY.md if you're a customer.`
             });
 
             await github.rest.pulls.update({
